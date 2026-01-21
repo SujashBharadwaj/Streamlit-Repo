@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IITM BDM Capstone — Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <style>
+    .wrap{max-width:980px;margin:0 auto;padding:8px 12px}
+    .soft{color:#5b647a;font-size:.95rem}
+    .intro{margin:10px 0 16px;padding:12px;border:1px solid #e6e9ff;background:#f6f8ff;border-radius:12px}
+    .intro h2{margin:6px 0 8px}
+    .intro p{margin:6px 0}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .card{
+      background:#fff;border:1px solid #e6e9ff;border-radius:14px;padding:12px;cursor:pointer;
+      transition:.15s transform ease, .15s box-shadow ease; text-align:center
+    }
+    .card:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(30,58,138,.08)}
+    .card[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+    .viewer-wrap{margin:16px 0;background:#fff;border:1px solid #e6e9ff;border-radius:12px;overflow:hidden}
+    .viewer{width:100%;height:min(85vh,1000px);border:0;display:block;background:#fafbff}
+    @media (max-width: 900px){.grid4{grid-template-columns:1fr 1fr}}
+    @media (max-width: 600px){.grid4{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="../../homepage.html">Sujash</a>
+    <nav class="nav">
+      <a href="../../homepage.html">Home</a>
+      <a href="../../about/">About</a>
+      <a class="active" href="../">Projects</a>
+      <a href="../../blog/">Blog</a>
+      <a class="cta" href="mailto:sujashbharadwaj10@gmail.com">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap">
+      <h1>IITM BDM Capstone</h1>
+      <p class="soft">Click a report card below to load it on this page.</p>
+    </section>
+
+    <section class="wrap intro">
+      <h2>Introduction to the BDM Capstone Project</h2>
+      <p><strong>About BDM Capstone Project.</strong> The capstone is an independent research project. A student connects with a real business in an organized sector like manufacturing, IT, or automobile or in an unorganized sector like kirana stores and vendors. The student identifies a business problem, collects primary data, cleans it, analyzes it, and presents useful insights to decision makers.</p>
+      <p><strong>Purpose of the course.</strong> The BDM theory course is a prerequisite. Data drives decisions, but the reasoning and reporting must be clear. This project trains you to justify your approach, link sections into a professional document, and show how insights help decision makers. It is hands on from raw data to a recommendation.</p>
+
+      <h3>Project stages and weightage</h3>
+      <ul>
+        <li><strong>Proposal.</strong> 4 to 5 pages. Organization background, problem statement and context, approach with justification, timeline with WBS and Gantt, expected outcomes. Weightage 20 percent.</li>
+        <li><strong>Mid term.</strong> 8 to 10 pages. Short video proof with the business owner or manager, field notes, metadata, descriptive statistics, and preliminary analysis with interpretation. Weightage 20 percent.</li>
+        <li><strong>Final report.</strong> 18 to 20 pages. Complete end to end report with methods, results, and recommendations. Weightage 40 percent.</li>
+        <li><strong>Viva voce.</strong> Up to 10 slides to present and defend the project. Weightage 20 percent.</li>
+      </ul>
+      <p class="soft">After all four stages, top projects are shortlisted and showcased to industry professionals.</p>
+    </section>
+
+    <section class="wrap">
+      <h2>Report index</h2>
+      <div class="grid4" id="picker">
+        <div class="card" role="button" tabindex="0" data-src="proposal.pdf"><h3>Proposal</h3></div>
+        <div class="card" role="button" tabindex="0" data-src="midterm.pdf"><h3>Mid term</h3></div>
+        <div class="card" role="button" tabindex="0" data-src="final.pdf"><h3>Final</h3></div>
+        <div class="card" role="button" tabindex="0" data-src="presentation.pdf"><h3>Presentation</h3></div>
+      </div>
+
+      <div class="viewer-wrap">
+        <iframe id="docFrame" class="viewer" title="Capstone document viewer" src=""></iframe>
+      </div>
+      <p class="soft">If a card looks greyed out, upload that PDF into this folder with the exact file name.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>© <span id="y"></span> Sujash Bharadwaj</div>
+    <div class="links">
+      <a href="mailto:sujashbharadwaj10@gmail.com">Email</a>
+      <a href="https://github.com/SujashBharadwaj" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/sujash-bharadwaj-14752827a/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/main.js"></script>
+  <script>
+    const frame = document.getElementById('docFrame');
+    const cards = Array.from(document.querySelectorAll('#picker .card'));
+
+    async function exists(path){
+      try{ const r = await fetch(path, {method:'HEAD'}); return r.ok; }
+      catch{ return false; }
+    }
+
+    function load(src){
+      frame.src = src + '#view=FitH&toolbar=1';
+    }
+
+    async function init(){
+      // disable missing files
+      await Promise.all(cards.map(async c=>{
+        const ok = await exists(c.dataset.src);
+        if(!ok){ c.setAttribute('aria-disabled','true'); }
+      }));
+      // first available
+      const first = cards.find(c => !c.hasAttribute('aria-disabled'));
+      if(first){ load(first.dataset.src); }
+    }
+
+    cards.forEach(c=>{
+      c.addEventListener('click', ()=>{
+        if(c.hasAttribute('aria-disabled')) return;
+        load(c.dataset.src);
+      });
+      c.addEventListener('keydown', e=>{
+        if((e.key==='Enter' || e.key===' ') && !c.hasAttribute('aria-disabled')){
+          e.preventDefault(); load(c.dataset.src);
+        }
+      });
+    });
+
+    init();
+  </script>
+</body>
+</html>

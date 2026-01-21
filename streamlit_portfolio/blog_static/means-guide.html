@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Means in statistics: definitions, formulas, history, and when to use each</title>
+  <meta name="description" content="Arithmetic, geometric, harmonic, RMS, contraharmonic, weighted, trimmed, and the power mean. Clear definitions, LaTeX formulas, short history, use cases, and an interactive playground with a chart." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+  <!-- MathJax for LaTeX -->
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']] } };
+  </script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <style>
+    .article .post{max-width:980px;margin:0 auto;padding:12px}
+    .post-meta{color:#666;font-size:.95rem;margin-top:-6px}
+    .defbox{background:#f6f8ff;border-left:4px solid #1e3a8a;padding:10px 12px;border-radius:8px;margin:12px 0}
+    table{border-collapse:collapse;width:100%;margin:8px 0 16px}
+    th,td{border:1px solid #e6e9ff;padding:8px;text-align:left;vertical-align:top}
+    tbody tr:nth-child(odd){background:#fbfcff}
+    .muted{color:#555}
+    .refs{font-size:.9rem;color:#555}
+
+    /* playground */
+    .play{margin:16px 0;padding:12px;border:1px solid #e6e9ff;border-radius:12px;background:#fbfcff}
+    .play h3{margin:0 0 8px}
+    .play .row{display:grid;gap:8px;margin:8px 0}
+    .play label{font-weight:600}
+    .play input[type="text"], .play input[type="number"], .play textarea{
+      width:100%; padding:10px; border:1px solid #dfe3ff; border-radius:8px; font-family:inherit
+    }
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+    .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    .controls label{display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #e3e6ff; padding:6px 10px; border-radius:999px}
+
+    .chart-wrap{margin-top:14px; background:#fff; border:1px solid #e6e9ff; border-radius:12px; padding:10px}
+    .legend{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 0}
+    .legend .chip{display:inline-flex; align-items:center; gap:6px; background:#f6f8ff; border:1px solid #e6e9ff; padding:4px 8px; border-radius:999px; font-size:.9rem}
+    .swatch{width:12px; height:12px; border-radius:3px; display:inline-block}
+
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    @media (max-width: 700px){
+      .grid3{grid-template-columns:1fr}
+      .grid2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="../homepage.html">Sujash</a>
+    <nav class="nav">
+      <a href="../homepage.html">Home</a>
+      <a href="../about/">About</a>
+      <a href="../projects/">Projects</a>
+      <a class="active" href="../blog/">Blog</a>
+      <a class="cta" href="mailto:sujashbharadwaj10@gmail.com">Contact</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <article class="post">
+      <h1>Means in statistics: definitions, formulas, history, and when to use each</h1>
+      <p class="post-meta">Published: <time datetime="2025-09-02">Sep 2, 2025</time></p>
+
+      <div class="defbox">
+        For positive data it is useful to remember this order: Harmonic ≤ Geometric ≤ Arithmetic ≤ RMS ≤ Contraharmonic. Each mean tells a different story about the same numbers.
+      </div>
+
+      <!-- ========================= CORE DEFINITIONS ========================= -->
+      <h2>Core definitions and formulas</h2>
+
+      <h3>Arithmetic Mean</h3>
+      <p><strong>Definition.</strong> The simple average of values. It shares the total evenly across all observations.</p>
+      <p><strong>Formula.</strong> \( \displaystyle \bar{x}=\frac{1}{n}\sum_{i=1}^{n}x_i \)</p>
+      <p><strong>History.</strong> The idea of averaging appears in ancient arithmetic practice and became standard in early modern statistics as a basic summary. It is tied to the method of least squares since minimizing squared errors targets the arithmetic mean as a center. The mean entered official statistics through astronomy and geodesy where repeated measurements were combined. In the twentieth century it became the default figure in reports and dashboards. Its popularity comes from linearity and ease of interpretation. Its weakness is sensitivity to outliers and skew.</p>
+
+      <h3>Geometric Mean</h3>
+      <p><strong>Definition.</strong> The multiplicative average. It describes a typical proportional change.</p>
+      <p><strong>Formula.</strong> \( \displaystyle \operatorname{GM}(x)=\Big(\prod_{i=1}^{n}x_i\Big)^{1/n} \) with \(x_i>0\)</p>
+      <p><strong>History.</strong> The geometric mean appears in Greek geometry and later in Euclid’s right-triangle altitude theorem. It became important in finance and growth analysis because compounding is multiplicative. Scientists use it for fold changes and ratios where units cancel. In information retrieval and model scoring it stabilizes chained rates. Its use spread with logarithms because logs turn products into sums. The key restriction is that values must be positive.</p>
+
+      <h3>Harmonic Mean</h3>
+      <p><strong>Definition.</strong> The correct average for rates and ratios per unit.</p>
+      <p><strong>Formula.</strong> \( \displaystyle \operatorname{HM}(x)=\frac{n}{\sum_{i=1}^{n}1/x_i} \) with \(x_i>0\)</p>
+      <p><strong>History.</strong> The harmonic mean was studied with the arithmetic and geometric means in classical mathematics. It fits problems where distance or work is fixed and speed varies. Statisticians adopted it for combined rates and effective resistances in physics. In modern metrics like the F1 score it balances precision and recall by penalizing small components. It is sensitive to zeros and requires strictly positive inputs. When small values matter a lot, HM is the honest center.</p>
+
+      <h3>RMS (Quadratic Mean)</h3>
+      <p><strong>Definition.</strong> The magnitude average based on squares. It emphasizes large deviations.</p>
+      <p><strong>Formula.</strong> \( \displaystyle \operatorname{RMS}(x)=\sqrt{\frac{1}{n}\sum_{i=1}^{n}x_i^2} \)</p>
+      <p><strong>History.</strong> RMS rose with electrical engineering and statistical error analysis. Alternating current power is proportional to the square of voltage or current, which makes RMS natural. In statistics RMS appears inside variance and root mean square error. In signal processing it measures energy and loudness. As squaring inflates large values, RMS sits above the arithmetic mean for positive data. It is the \(p=2\) case of the power mean family.</p>
+
+      <h3>Contraharmonic Mean</h3>
+      <p><strong>Definition.</strong> An intensity-weighted average that favors large values.</p>
+      <p><strong>Formula.</strong> \( \displaystyle C(x)=\frac{\sum_{i=1}^{n}x_i^2}{\sum_{i=1}^{n}x_i} \) with \(x_i\ge 0\) and \( \sum x_i>0 \)</p>
+      <p><strong>History.</strong> The contraharmonic mean appears in classical number theory and is closely related to the Lehmer means. It has practical uses in image filtering where brighter pixels carry more weight. In size-biased sampling it upweights larger units. Because the numerator uses squares it can move far to the right when large values are present. It sits above RMS for strictly positive and spread out data. It is best used when large intensities should drive the average.</p>
+
+      <h3>Weighted Mean</h3>
+      <p><strong>Definition.</strong> A mean that respects different importances or sample sizes.</p>
+      <p><strong>Formula.</strong> \( \displaystyle \bar{x}_w=\frac{\sum_{i=1}^{n}w_i x_i}{\sum_{i=1}^{n}w_i} \) with \( \sum w_i>0 \)</p>
+      <p><strong>History.</strong> Weighted means entered statistics through survey design and meta analysis. Grades and GPAs also use credits as weights. In experiments we weight observations by precision or sample size to form combined estimates. In modern evaluation pipelines weights reflect traffic share or class importance. The figure remains easy to explain because it is still linear. Choosing weights is the main modeling decision.</p>
+
+      <h3>Trimmed Mean</h3>
+      <p><strong>Definition.</strong> The arithmetic mean after dropping a fixed percentage from each tail.</p>
+      <p><strong>Formula.</strong> Sort the data, remove \(p\%\) from the bottom and top, then compute \( \bar{x} \)</p>
+      <p><strong>History.</strong> Trimmed means grew out of robust statistics to reduce the pull of outliers. Statistical agencies use trimmed means to track underlying trends in volatile series. In competitions and judging they help ignore extreme scores. Analysts use them when the median throws away too much and the mean is too sensitive. The trimming level sets the robustness. A small trim gives a gentle safeguard.</p>
+
+      <h3>Power Mean (Generalized Mean)</h3>
+      <p><strong>Definition.</strong> A one-parameter family that moves from HM to GM to AM to RMS as the parameter increases.</p>
+      <p><strong>Formula.</strong> \( \displaystyle M_p(x)=\left(\frac{1}{n}\sum_{i=1}^{n}x_i^{\,p}\right)^{\!1/p} \) with the limits \( M_{-1}=\mathrm{HM} \), \( \lim_{p\to 0}M_p=\mathrm{GM} \), \( M_{1}=\mathrm{AM} \), \( M_{2}=\mathrm{RMS} \)</p>
+      <p><strong>History.</strong> The generalized mean collects many classical means under one roof. It explains the ordering on positive data and gives a clean way to study sensitivity. By tuning \(p\) we can reward small values or large values as needed. It shows how design choices lead to different centers. The family connects to Hölder and Minkowski inequalities. It is a good teaching tool because it makes the landscape visible.</p>
+
+      <!-- ========================= WHEN TO USE WHAT ========================= -->
+      <h2>When to use what</h2>
+      <table>
+        <thead><tr><th>Situation</th><th>Use</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Totals or additive processes</td><td>Arithmetic mean</td><td>Shares the total evenly and is linear</td></tr>
+          <tr><td>Compounded growth or chained ratios</td><td>Geometric mean</td><td>Captures proportional change and is scale free</td></tr>
+          <tr><td>Rates over a fixed resource</td><td>Harmonic mean</td><td>Averages per unit correctly and punishes small rates</td></tr>
+          <tr><td>Energy, magnitude or squared error</td><td>RMS</td><td>Squares highlight large deviations and match power</td></tr>
+          <tr><td>Intensity or size biased contexts</td><td>Contraharmonic</td><td>Weights by the square and follows the bright or large</td></tr>
+          <tr><td>Different importances or sample sizes</td><td>Weighted mean</td><td>Reflects credits, prevalence or precision</td></tr>
+          <tr><td>Outliers present but keep a mean</td><td>Trimmed mean</td><td>Removes tails and keeps a familiar average</td></tr>
+          <tr><td>Sensitivity study or policy knob</td><td>Power mean</td><td>Move \(p\) to compare centers and see the effect</td></tr>
+        </tbody>
+      </table>
+
+      <!-- ========================= PLAYGROUND ========================= -->
+      <h2>Interactive playground</h2>
+      <div class="play">
+        <div class="grid3">
+          <div>
+            <label for="data">Numbers (comma, space or newline)</label>
+            <textarea id="data" rows="3" placeholder="e.g. 1, 2, 8">1, 2, 8</textarea>
+          </div>
+          <div>
+            <label for="weights">Weights (optional; same count)</label>
+            <input id="weights" type="text" placeholder="e.g. 1, 1, 2">
+          </div>
+          <div>
+            <label for="trim">Trim percent each tail</label>
+            <input id="trim" type="number" min="0" max="40" value="0">
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div>
+            <label for="p">Power mean \(p\) (0 gives GM, 1 gives AM, 2 gives RMS)</label>
+            <input id="p" type="range" min="-2" max="4" step="0.1" value="1" oninput="pOut.value=this.value">
+            <div>p = <output id="pOut">1</output></div>
+          </div>
+          <div>
+            <label>Show on chart</label>
+            <div class="controls">
+              <label><input type="checkbox" class="meanChk" value="am" checked> AM</label>
+              <label><input type="checkbox" class="meanChk" value="gm" checked> GM</label>
+              <label><input type="checkbox" class="meanChk" value="hm" checked> HM</label>
+              <label><input type="checkbox" class="meanChk" value="rms" checked> RMS</label>
+              <label><input type="checkbox" class="meanChk" value="c"> Contra</label>
+              <label><input type="checkbox" class="meanChk" value="w"> Weighted</label>
+              <label><input type="checkbox" class="meanChk" value="t"> Trimmed</label>
+              <label><input type="checkbox" class="meanChk" value="mp"> \(M_p\)</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <button id="compute" class="btn">Compute and draw</button>
+          <span id="msg" class="muted"></span>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="chart" width="980" height="220"></canvas>
+          <div class="legend" id="legend"></div>
+        </div>
+
+        <div class="row">
+          <table>
+            <thead><tr><th>Mean</th><th>Value</th><th>Difference from AM</th></tr></thead>
+            <tbody id="results"></tbody>
+          </table>
+        </div>
+
+        <p class="muted">
+          Notes. GM and HM and \(M_p\) with \(p\le 0\) require all values to be positive. Contraharmonic needs non-negative values and a positive sum.
+        </p>
+      </div>
+
+      <!-- ========================= TAKEAWAYS ========================= -->
+      <h2>Takeaways</h2>
+      <ul>
+        <li>Say which mean you used and why. The choice changes the story.</li>
+        <li>Use geometric mean for growth and chained ratios. Use harmonic mean for rates. Use RMS when energy or large deviations matter.</li>
+        <li>Trim if outliers dominate but you still want a mean. Report the trim level.</li>
+        <li>Try the power mean slider to see how conclusions shift with \(p\).</li>
+      </ul>
+
+      <p><a href="../blog/">Back to Blog</a></p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div>© <span id="y"></span> Sujash Bharadwaj</div>
+    <div class="links">
+      <a href="mailto:sujashbharadwaj10@gmail.com">Email</a>
+      <a href="https://github.com/SujashBharadwaj" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/sujash-bharadwaj-14752827a/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+
+  <!-- Playground logic + chart (no libraries) -->
+  <script>
+    // Helpers
+    const byId = id => document.getElementById(id);
+    const dataEl = byId('data'), weightsEl = byId('weights'), trimEl = byId('trim');
+    const pEl = byId('p'), msgEl = byId('msg'), resT = byId('results');
+    const btn = byId('compute'), canvas = byId('chart'), legendEl = byId('legend');
+    const meanChks = () => Array.from(document.querySelectorAll('.meanChk')).filter(c=>c.checked).map(c=>c.value);
+
+    const COLORS = {
+      am:  '#1e3a8a',
+      gm:  '#2563eb',
+      hm:  '#0ea5e9',
+      rms: '#10b981',
+      c:   '#f59e0b',
+      w:   '#a855f7',
+      t:   '#ef4444',
+      mp:  '#111827'
+    };
+
+    const parseList = (str) =>
+      str.split(/[\s,]+/).map(s => s.trim()).filter(Boolean).map(Number).filter(n => Number.isFinite(n));
+
+    function round(x){ return (x===undefined || isNaN(x)) ? '—' : (+x).toFixed(6); }
+
+    // Means
+    const am = xs => xs.reduce((a,b)=>a+b,0)/xs.length;
+
+    function gm(xs){ if (xs.some(v => v <= 0)) return undefined;
+      const s = xs.reduce((a,b)=>a+Math.log(b),0); return Math.exp(s/xs.length); }
+
+    function hm(xs){ if (xs.some(v => v <= 0)) return undefined;
+      return xs.length / xs.reduce((a,b)=>a + 1/b, 0); }
+
+    const rms = xs => Math.sqrt(xs.reduce((a,b)=>a+b*b,0)/xs.length);
+
+    function contraharmonic(xs){
+      if (xs.some(v => v < 0)) return undefined;
+      const num = xs.reduce((a,b)=>a+b*b,0), den = xs.reduce((a,b)=>a+b,0);
+      if (den <= 0) return undefined; return num/den;
+    }
+
+    function weighted(xs, ws){
+      const sw = ws.reduce((a,b)=>a+b,0); if (sw === 0) return undefined;
+      return xs.reduce((a,xi,i)=>a + xi*ws[i],0)/sw;
+    }
+
+    function trimmedMean(xs, pct){
+      if (!pct) return am(xs);
+      const k = Math.floor(xs.length * (pct/100));
+      const sorted = [...xs].sort((a,b)=>a-b).slice(k, xs.length-k);
+      if (sorted.length === 0) return undefined;
+      return am(sorted);
+    }
+
+    function powerMean(xs, p){
+      if (p <= 0 && xs.some(v => v <= 0)) return undefined;
+      if (p === 0) return gm(xs);
+      const meanPow = xs.reduce((a,b)=>a + Math.pow(b, p), 0) / xs.length;
+      if (!Number.isFinite(meanPow) || meanPow < 0) return undefined;
+      return Math.pow(meanPow, 1/p);
+    }
+
+    function computeAll(){
+      msgEl.textContent = '';
+      resT.innerHTML = '';
+      legendEl.innerHTML = '';
+
+      const xs = parseList(dataEl.value);
+      if (xs.length === 0){ msgEl.textContent = 'Add some numbers first.'; draw(xs, {}); return; }
+
+      let ws = null;
+      const wsRaw = weightsEl.value.trim();
+      if (wsRaw){
+        ws = parseList(wsRaw);
+        if (ws.length !== xs.length){ msgEl.textContent = 'Weights must match data count.'; return; }
+      }
+
+      const t = Math.max(0, Math.min(40, +trimEl.value||0));
+      const p = +pEl.value;
+
+      const vals = {
+        am: am(xs),
+        gm: gm(xs),
+        hm: hm(xs),
+        rms: rms(xs),
+        c:  contraharmonic(xs),
+        w:  ws ? weighted(xs, ws) : undefined,
+        t:  trimmedMean(xs, t),
+        mp: powerMean(xs, p)
+      };
+
+      const delta = (v, base) => (v===undefined ? '—' : (v-base).toFixed(6));
+      const base = vals.am;
+
+      const rows = [
+        ['Arithmetic mean (AM)', 'am'],
+        ['Geometric mean (GM)', 'gm'],
+        ['Harmonic mean (HM)', 'hm'],
+        ['RMS (quadratic mean)', 'rms'],
+        ['Contraharmonic mean', 'c'],
+        ['Weighted mean', 'w'],
+        [`Trimmed mean (${t}% each tail)`, 't'],
+        [`Power mean (p=${p})`, 'mp'],
+      ];
+      for (const [name, key] of rows){
+        const tr = document.createElement('tr');
+        const td1 = document.createElement('td'); td1.textContent = name;
+        const td2 = document.createElement('td'); td2.textContent = round(vals[key]);
+        const td3 = document.createElement('td'); td3.textContent = (base!==undefined) ? delta(vals[key], base) : '—';
+        tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); resT.appendChild(tr);
+        if (meanChks().includes(key) && vals[key] !== undefined){
+          const chip = document.createElement('span'); chip.className = 'chip';
+          const sw = document.createElement('span'); sw.className='swatch'; sw.style.background = COLORS[key];
+          chip.appendChild(sw); chip.appendChild(document.createTextNode(` ${name}: ${round(vals[key])}`));
+          legendEl.appendChild(chip);
+        }
+      }
+
+      draw(xs, vals);
+    }
+
+    function draw(xs, vals){
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0,0,W,H);
+
+      if (xs.length === 0){
+        ctx.fillStyle = '#666'; ctx.fillText('Enter numbers and click Compute and draw', 16, 24);
+        return;
+      }
+
+      const padL=40, padR=20, padT=20, padB=30;
+      const minX = Math.min(...xs), maxX = Math.max(...xs);
+      const visVals = Object.values(vals).filter(v=>v!==undefined);
+      const lo = Math.min(minX, ...visVals) - 0.1*Math.abs(minX||1);
+      const hi = Math.max(maxX, ...visVals) + 0.1*Math.abs(maxX||1);
+      const x2px = x => padL + ( (x - lo) / (hi - lo) ) * (W - padL - padR);
+
+      // axis
+      const axisY = H - padB;
+      const tickColor = '#dde1ff';
+      ctx.strokeStyle = '#c7ccff'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(padL, axisY); ctx.lineTo(W-padR, axisY); ctx.stroke();
+
+      // ticks
+      ctx.fillStyle = '#666'; ctx.font = '12px Inter, system-ui, sans-serif';
+      for (let i=0;i<=5;i++){
+        const t = lo + i*(hi-lo)/5;
+        const x = x2px(t);
+        ctx.beginPath(); ctx.moveTo(x, axisY); ctx.lineTo(x, axisY+6); ctx.strokeStyle=tickColor; ctx.stroke();
+        const label = (Math.abs(t) < 1e-6) ? '0' : t.toFixed(2);
+        ctx.fillText(label, x-12, axisY+18);
+      }
+
+      // datapoints
+      for (const x of xs){
+        const px = x2px(x), py = axisY-20;
+        ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI*2);
+        ctx.fillStyle = '#1f2937'; ctx.fill();
+        ctx.fillText(String(x), px-6, py-8);
+      }
+
+      // means
+      const selected = meanChks();
+      for (const key of selected){
+        const v = vals[key];
+        if (v === undefined) continue;
+        const x = x2px(v);
+        ctx.strokeStyle = COLORS[key]; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, axisY); ctx.stroke();
+      }
+    }
+
+    btn.addEventListener('click', computeAll);
+    document.querySelectorAll('.meanChk').forEach(c => c.addEventListener('change', computeAll));
+    window.addEventListener('load', computeAll);
+  </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Energy Equities MI Reporting (2024–2025) — Sujash</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <style>
+    .page{max-width:1100px;margin:0 auto;padding:16px 12px}
+    .lede{color:#444;margin-top:8px}
+    .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+    .note{color:#555;font-size:.95rem}
+    .card{border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;background:#fff;margin-top:16px}
+    .card h2{font-size:1.1rem;margin:0;padding:12px 14px;border-bottom:1px solid #f1f5f9}
+    .card .body{padding:12px 14px}
+    .embed{position:relative;aspect-ratio:3/4;background:#fafafa}
+    .embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    .tags .tag{display:inline-block;padding:2px 8px;border:1px solid #e5e7eb;border-radius:999px;font-size:12px;margin-right:6px}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="../../homepage.html">Sujash</a>
+    <nav class="nav">
+      <a href="../../homepage.html">Home</a>
+      <a href="../../about/">About</a>
+      <a href="../">Projects</a>
+      <a href="../../blog/">Blog</a>
+      <a class="cta" href="mailto:sujashbharadwaj10@gmail.com">Contact</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <h1>Operational Reporting of Indian Energy Equities <span class="note">(2024–2025)</span></h1>
+    <p class="lede">Dataset generation, exception monitoring, and MI-style reporting for 10 NSE energy companies.</p>
+    <div class="tags">
+      <span class="tag">Dataset</span><span class="tag">Google Sheets</span><span class="tag">MI Reporting</span><span class="tag">Process Report</span>
+    </div>
+
+    <!-- top buttons -->
+    <div class="btnrow">
+      <!-- opens the actual Google Sheet in a new tab -->
+      <a class="btn" href="https://docs.google.com/spreadsheets/d/1M6gXq5Dq1Al95RO6OqCx3ZyLTTeW2uLR7vi1UGiqBWk/edit?usp=sharing" target="_blank" rel="noopener">Open Google Sheet</a>
+      <!-- optional: keep a CSV download if you want -->
+      <!-- <a class="btn ghost" href="./data/master.csv" download>Download CSV</a> -->
+      <a class="btn ghost" href="./Process_Report.pdf" download>Download Process Report</a>
+    </div>
+    <p class="note">You can view the live sheet below or open it in a new tab. Downloads are provided for personal use.</p>
+
+    <!-- card 1: process report embedded -->
+    <section class="card">
+      <h2>Process report</h2>
+      <div class="embed">
+        <iframe src="./Process_Report.pdf" title="Process Report PDF"></iframe>
+      </div>
+      <div class="body">
+        <p class="note">Methodology, formulas, exception rules, and findings embedded on-page.</p>
+      </div>
+    </section>
+
+    <!-- card 2: live dataset embedded -->
+    <section class="card">
+      <h2>Live dataset</h2>
+      <div class="embed">
+        <!-- use the Publish to web → Embed URL, not the edit URL -->
+        <iframe src="https://docs.google.com/spreadsheets/d/1M6gXq5Dq1Al95RO6OqCx3ZyLTTeW2uLR7vi1UGiqBWk/edit?usp=sharing" title="Live Google Sheet"></iframe>
+      </div>
+      <div class="body">
+        <p class="note">This is the published embed of the master sheet. Updates in Google Sheets will reflect here.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>© <span id="y"></span> Sujash Bharadwaj</div>
+    <div class="links">
+      <a href="mailto:sujashbharadwaj10@gmail.com">Email</a>
+      <a href="https://github.com/SujashBharadwaj" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/sujash-bharadwaj-14752827a/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </footer>
+
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

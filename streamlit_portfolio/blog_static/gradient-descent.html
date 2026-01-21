@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gradient descent: a visual guide and playground</title>
+  <meta name="description" content="History, intuition, math, an interactive 1-D simulator, and how gradient descent shows up across machine learning." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+  <!-- MathJax for LaTeX -->
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']] } };
+  </script>
+  <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <!-- Desmos embed API -->
+  <script src="https://www.desmos.com/api/v1.8/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+
+  <style>
+    .post{max-width:980px;margin:0 auto;padding:12px}
+    .post-meta{color:#666;font-size:.95rem;margin-top:-6px}
+    .two{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;align-items:start}
+    @media (max-width: 860px){.two{grid-template-columns:1fr}}
+    figure.card{border:1px solid #e6e9ff;border-radius:12px;background:#fff}
+    figure.card img{max-width:100%;display:block;border-top-left-radius:12px;border-top-right-radius:12px}
+    figure.card figcaption{padding:10px;color:#5b647a}
+    .defbox{background:#f6f8ff;border-left:4px solid #1e3a8a;padding:10px 12px;border-radius:8px;margin:12px 0}
+    .soft{color:#5b647a}
+    h2{scroll-margin-top:80px}
+
+    /* playground */
+    .play{margin:16px 0;padding:12px;border:1px solid #e6e9ff;border-radius:12px;background:#fbfcff}
+    .play .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width: 900px){.play .grid{grid-template-columns:1fr}}
+    .play label{font-weight:600}
+    .play input[type="number"], .play input[type="text"]{width:100%;padding:10px;border:1px solid #dfe3ff;border-radius:8px;font-family:inherit}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+    table{border-collapse:collapse;width:100%;margin-top:12px}
+    th,td{border:1px solid #e6e9ff;padding:8px;text-align:left}
+    tbody tr:nth-child(odd){background:#fbfcff}
+    .chart{border:1px solid #e6e9ff;border-radius:12px;background:#fff}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .legend{font-size:.92rem;color:#444;margin-top:6px}
+    /* desmos */
+    #desmos{width:100%; height:380px; border:1px solid #e6e9ff; border-radius:12px; background:#fff}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="../homepage.html">Sujash</a>
+    <nav class="nav">
+      <a href="../homepage.html">Home</a>
+      <a href="../projects/">Projects</a>
+      <a class="active" href="../blog/">Blog</a>
+      <a class="cta" href="mailto:sujashbharadwaj10@gmail.com">Contact</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <article class="post">
+      <h1>Gradient descent: a visual guide and playground</h1>
+      <p class="post-meta">Published: <time datetime="2025-09-08">Sep 8, 2025</time> ~10 min read</p>
+
+      <div class="defbox">
+        One line summary: follow the negative gradient to move downhill on a cost function until the slope is close to zero.
+      </div>
+
+      <!-- HISTORY -->
+      <h2>History</h2>
+      <div class="two">
+        <div>
+          <p>
+            Augustin-Louis Cauchy wrote one of the first clear accounts of the steepest-descent method in 1847 while studying how to minimize functions using derivatives. The idea is simple: from your current point, move in the direction where the function drops fastest, choose a sensible step, and repeat. The method spread from numerical analysis to optimization and then to machine learning.
+          </p>
+          <p>
+            Modern variants like stochastic and mini-batch gradient descent, momentum, RMSProp, and Adam drive the training of large neural networks. The common thread is the same Cauchy intuition: slope tells you which way to go.
+          </p>
+        </div>
+        <figure class="card">
+          <img src="../assets/img/cauchy.png" alt="Portrait of Augustin-Louis Cauchy">
+          <figcaption>
+            Cauchy (1789–1857). His steepest-descent rule mixes two ingredients: a direction from the derivative and a step length from a simple search. This mix is still what we use today.
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- WHY -->
+      <h2>Why was it proposed?</h2>
+      <p>
+        The task is to find a parameter value that makes a differentiable function \(f(\theta)\) as small as possible. In many problems you cannot solve \(f'(\theta)=0\) in closed form, the function may be high dimensional, and each evaluation can be noisy or expensive. Steepest descent gives a local, iterative recipe that only needs gradients. It uses a first-order Taylor approximation around the current point and takes a step that reduces the value for a small enough learning rate. That makes it cheap to compute, easy to code, and predictable to improve.
+      </p>
+
+      <!-- HOW -->
+      <h2>How it works (math)</h2>
+      <div class="two">
+        <div>
+          <p>
+            In one dimension the update is
+            \( x_{t+1} = x_t - \alpha\, f'(x_t) \).
+            In more than one dimension we write
+            \( \boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t - \alpha\, \mathrm{grad}\, f(\boldsymbol{\theta}_t) \).
+            The learning rate \( \alpha \) controls how far you step. Small \( \alpha \) gives slow progress. Large \( \alpha \) can overshoot or diverge.
+          </p>
+          <p>
+            A quick justification uses the first-order approximation
+            \( f(\theta+\Delta) \approx f(\theta) + \mathrm{grad}\,f(\theta)^\top \Delta \).
+            Choosing \( \Delta = -\alpha\, \mathrm{grad}\, f(\theta) \) gives a decrease for small \( \alpha \).
+            On a round quadratic the path heads straight to the minimum.
+            On a narrow valley the path zig-zags unless you add momentum or scale the features.
+          </p>
+        </div>
+        <figure class="card">
+          <img src="../assets/img/bowltangent.png" alt="Bowl shaped curve with a tangent and the downhill direction">
+          <figcaption>
+            A bowl shaped \(f(x)\). The tangent shows the local slope. Gradient descent takes a step in the opposite direction. With a good step size you move toward the bottom each time.
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- PLAYGROUND -->
+      <h2>Interactive playground (1-D, cubic only)</h2>
+      <p class="soft">Define a cubic \(f(x)=a_3x^3+a_2x^2+a_1x+a_0\). Pick a learning rate and a start point. We round each step to 2 decimals and stop at 20 iterations.</p>
+
+      <div class="play">
+        <div class="grid">
+          <div>
+            <label>Coefficients</label>
+            <div class="row">
+              <input id="a3" type="number" step="any" placeholder="a3" value="0">
+              <input id="a2" type="number" step="any" placeholder="a2" value="1">
+              <input id="a1" type="number" step="any" placeholder="a1" value="0">
+              <input id="a0" type="number" step="any" placeholder="a0" value="0">
+            </div>
+            <div class="soft mono" id="fxStr"></div>
+            <div class="soft mono" id="dfxStr"></div>
+          </div>
+          <div>
+            <label for="x0">Initial \(x_0\)</label>
+            <input id="x0" type="number" step="any" value="2">
+            <label for="alpha">Learning rate \(\\alpha\)</label>
+            <input id="alpha" type="number" step="any" value="0.2">
+            <div class="row">
+              <label><input type="checkbox" id="rounding" checked> Round each step to 2 decimals</label>
+            </div>
+          </div>
+          <div>
+            <label for="override">Override derivative \(f'(x)\) (optional)</label>
+            <input id="override" type="text" placeholder="e.g. 3x^2 + 2x + 1  (leave blank to auto-derive)">
+            <div class="soft">Use <span class="mono">x</span>, numbers, +, −, *, ^. Example: <span class="mono">3x^2 − 2x + 1</span>.</div>
+            <div class="row">
+              <button class="btn" id="stepBtn">Step once</button>
+              <button class="btn" id="runBtn">Run to 20 or convergence</button>
+              <button class="btn ghost" id="resetBtn">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend">We stop early if \(|f'(x)| < 0.01\). If 20 steps are reached we report the last value.</div>
+
+        <canvas id="miniChart" class="chart" width="940" height="220" style="margin-top:10px"></canvas>
+
+        <table>
+          <thead><tr><th>Step</th><th>x</th><th>f(x)</th><th>f'(x)</th></tr></thead>
+          <tbody id="steps"></tbody>
+        </table>
+
+        <div id="result" class="defbox soft"></div>
+
+        <h3 style="margin-top:14px">Desmos view</h3>
+        <div id="desmos"></div>
+      </div>
+
+      <!-- USAGE -->
+      <h2>Usage in machine learning</h2>
+      <div class="two">
+        <div>
+          <p>
+            We use gradient descent whenever we fit parameters by minimizing a loss. Linear regression uses mean squared error. Logistic regression uses log loss. Neural networks minimize a sum of per example losses composed with layers of nonlinear functions. In large datasets we rarely use the full gradient every time. Stochastic gradient descent computes a noisy gradient from a small batch and takes many cheap steps. Momentum speeds travel along valleys and reduces zig-zags. Methods like AdaGrad, RMSProp, and Adam adapt step sizes per parameter using running statistics of past gradients. Regularization terms such as L1, L2, or weight decay are added to the objective and included in the update.
+          </p>
+        </div>
+        <figure class="card">
+          <img src="../assets/img/3Dcostsurface.png" alt="3D cost surface with a descent path">
+          <figcaption>
+            Complex surfaces can have several valleys. Different starting points may reach different minima. Schedules and momentum help keep progress steady.
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- LIMITATIONS -->
+      <h2>Limitations</h2>
+      <ul>
+        <li><strong>Local view only.</strong> It can stop at a local minimum or a saddle point.</li>
+        <li><strong>Step size is delicate.</strong> Too small is slow, too large overshoots or diverges.</li>
+        <li><strong>Ill-conditioning.</strong> Narrow valleys cause zig-zags. Feature scaling or preconditioning helps.</li>
+        <li><strong>Noisy gradients.</strong> With mini-batches the path wanders. Use schedules to cool the learning rate.</li>
+        <li><strong>Non-differentiable points.</strong> Kinks need subgradients or smoothing.</li>
+        <li><strong>Slow near the minimum.</strong> Slopes are tiny. Momentum or second-order ideas help finish.</li>
+      </ul>
+
+      <!-- CONCLUSION -->
+      <h2>Conclusion</h2>
+      <p>
+        Gradient descent lasts because it is practical. It needs a differentiable objective and a learning rate. With those two pieces it scales from a single variable to very large models. When you can write a loss and its gradient, you can try gradient descent in a few lines and usually get something that learns. Schedules, momentum, and adaptive steps are refinements on the same loop.
+      </p>
+
+      <!-- FUN FACTS -->
+      <h2>Fun facts</h2>
+      <ul>
+        <li>Cauchy described steepest descent with a simple line search to pick step size.</li>
+        <li>Early texts called it steepest descent or method of slopes. The word “gradient” came later.</li>
+        <li>On a quadratic with a perfect step size, one step can hit the minimum.</li>
+        <li>Feature scaling can turn a zig-zag path into a straight shot.</li>
+        <li>Most deep learning optimizers are gradient descent with smarter step sizes and momentum memories.</li>
+      </ul>
+
+      <p><a href="../blog/">Back to Blog</a></p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div>© <span id="y"></span> Sujash Bharadwaj</div>
+    <div class="links">
+      <a href="mailto:sujashbharadwaj10@gmail.com">Email</a>
+      <a href="https://github.com/SujashBharadwaj" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/sujash-bharadwaj-14752827a/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+
+  <!-- Playground logic (cubic only) -->
+  <script>
+    const $ = id => document.getElementById(id);
+    const round2 = x => Math.round(x * 100) / 100;
+
+    // coefficients a3..a0
+    function readCoefs(){
+      return [Number($('a3').value||0), Number($('a2').value||0), Number($('a1').value||0), Number($('a0').value||0)];
+    }
+    function dcoefs(a){ return [3*a[0], 2*a[1], 1*a[2], 0]; }
+
+    function polyStr(a){
+      const parts=[];
+      if(a[0]) parts.push(term(a[0],'x^3'));
+      if(a[1]) parts.push(term(a[1],'x^2'));
+      if(a[2]) parts.push(term(a[2],'x'));
+      if(a[3]) parts.push(num(a[3]));
+      return parts.length? join(parts) : '0';
+    }
+    function term(c, xpow){ if(c===1) return xpow; if(c===-1) return '-' + xpow; return c + xpow.replace('x', '*x').replace('*',''); }
+    function num(c){ return String(c); }
+    function join(parts){ return parts.join(' + ').replace(/\+\s-\s/g,'- '); }
+
+    function f_of(a,x){ return ((a[0]*x + a[1])*x + a[2])*x + a[3]; }
+    function df_of(da,x){ return ((da[0]*x + da[1])*x + da[2]); }
+
+    function parseOverride(expr){
+      const s = expr.toLowerCase().replace(/\s+/g,'');
+      if(!s) return null;
+      const terms = s.replace(/-/g,'+-').split('+').filter(Boolean);
+      return function(x){
+        let tot=0;
+        for(const t of terms){
+          let m = t.match(/^(-?\d*\.?\d*)x\^(-?\d+)$/) ||
+                  t.match(/^(-?\d*\.?\d*)x$/) ||
+                  t.match(/^x\^(-?\d+)$/) ||
+                  t.match(/^(-?\d+\.?\d*)$/);
+          if(!m) return NaN;
+          if(m.length===3 && t.includes('x^')){
+            const a = m[1]===''||m[1]==='+'?1:(m[1]==='-'?-1:parseFloat(m[1]));
+            const n = parseInt(m[2],10);
+            tot += a*Math.pow(x,n);
+          }else if(m.length===2 && t.endsWith('x')){
+            const a = m[1]===''||m[1]==='+'?1:(m[1]==='-'?-1:parseFloat(m[1]));
+            tot += a*x;
+          }else if(m.length===2 && t.startsWith('x^')){
+            const n = parseInt(m[1],10);
+            tot += Math.pow(x,n);
+          }else if(m.length===2){
+            tot += parseFloat(m[1]);
+          }
+        }
+        return tot;
+      };
+    }
+
+    const stepsBody = $('steps');
+    const resDiv = $('result');
+    const chart = $('miniChart');
+    const ctx = chart.getContext('2d');
+    const desmos = Desmos.Calculator($('desmos'), { expressions:false, zoomButtons:false });
+
+    function updateFormulaStrings(){
+      const a = readCoefs();
+      const da = dcoefs(a);
+      $('fxStr').innerHTML = 'f(x) = ' + polyStr(a);
+      $('dfxStr').innerHTML = "Auto f'(x) = " + polyStr(da);
+      if(window.MathJax) MathJax.typesetPromise?.();
+      desmos.setExpressions([{id:'fx', latex:`f(x) = ${polyStr(a)}`}]);
+    }
+
+    function redraw(points, a){
+      const xs = points.length? points.map(p=>p.x):[-5,5];
+      const minx = Math.min(...xs)-1, maxx = Math.max(...xs)+1;
+      const sample=[]; for(let i=0;i<200;i++){ const x=minx + i*(maxx-minx)/199; sample.push({x, y:f_of(a,x)}); }
+      const ys = sample.map(s=>s.y).concat(points.map(p=>p.y));
+      const miny = Math.min(...ys), maxy = Math.max(...ys);
+      const pad=20, W=chart.width, H=chart.height;
+      const x2 = x => pad + (x-minx)/(maxx-minx)*(W-2*pad);
+      const y2 = y => H-pad - (y-miny)/(maxy-miny||1)*(H-2*pad);
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#dde1ff'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad, y2(0)); ctx.lineTo(W-pad, y2(0)); ctx.moveTo(x2(0), pad); ctx.lineTo(x2(0), H-pad); ctx.stroke();
+      ctx.strokeStyle='#1e3a8a'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x2(sample[0].x), y2(sample[0].y));
+      for(const s of sample){ ctx.lineTo(x2(s.x), y2(s.y)); }
+      ctx.stroke();
+      ctx.fillStyle='#ef4444';
+      for(const p of points){ ctx.beginPath(); ctx.arc(x2(p.x), y2(p.y), 4, 0, Math.PI*2); ctx.fill(); }
+      const pointExprs = points.map((p,i)=>({ id:`pt${i}`, latex:`(${p.x}, ${p.y})`, color:'#ff0000' }));
+      desmos.setExpressions([{id:'fx', latex:`f(x) = ${polyStr(a)}`}].concat(pointExprs));
+    }
+
+    function appendRow(i, x, fx, dfx){
+      const tr = document.createElement('tr');
+      const td = t => { const el=document.createElement('td'); el.textContent = Number.isFinite(t)? t.toFixed(2) : 'NaN'; return el; };
+      const tdStep = t => { const el=document.createElement('td'); el.textContent = t; return el; };
+      tr.append(tdStep(i), td(x), td(fx), td(dfx));
+      stepsBody.appendChild(tr);
+    }
+
+    function runOneStep(state){
+      const { a, da, x, alpha, rounding, override } = state;
+      const grad = override ? override(x) : df_of(da, x);
+      if(!isFinite(grad)) return { x, f:f_of(a,x), df:NaN };
+      let nx = x - alpha * grad;
+      if(rounding) nx = round2(nx);
+      return { x:nx, f:f_of(a,nx), df: override ? override(nx) : df_of(da,nx) };
+    }
+
+    function resetTable(){ stepsBody.innerHTML=''; }
+
+    function simulate(runAll=false){
+      const a = readCoefs(), da = dcoefs(a);
+      const alpha = Number($('alpha').value||0.1);
+      let x = Number($('x0').value||0);
+      const rounding = $('rounding').checked;
+      const overrideExpr = $('override').value.trim();
+      const override = overrideExpr? parseOverride(overrideExpr) : null;
+
+      resetTable();
+      const points=[];
+      let df0 = override? override(x) : df_of(da,x);
+      appendRow(0, x, f_of(a,x), df0);
+      points.push({x: round2(x), y: round2(f_of(a,x))});
+
+      let it=0;
+      while(runAll ? it<20 : it<1){
+        const next = runOneStep({a,da,x,alpha,rounding,override});
+        x = next.x;
+        points.push({x: round2(x), y: round2(next.f)});
+        appendRow(it+1, x, next.f, next.df);
+        it++;
+        if(Math.abs(next.df) < 0.01) break;
+      }
+
+      const msg = (it>=20) ? 'Reached 20 iterations. Reporting last value.' :
+                  (Math.abs((override? override(x) : df_of(da,x))) < 0.01 ? 'Converged since |f\'(x)| < 0.01.' : 'Stopped.');
+      resDiv.innerHTML = `<strong>Answer:</strong> x ≈ <span class="mono">${round2(x)}</span>, f(x) ≈ <span class="mono">${round2(f_of(a,x))}</span> <span class="soft">(${msg})</span>`;
+
+      redraw(points, a);
+    }
+
+    $('stepBtn').addEventListener('click', ()=> simulate(false));
+    $('runBtn').addEventListener('click', ()=> simulate(true));
+    $('resetBtn').addEventListener('click', ()=>{
+      $('x0').value = 2; $('alpha').value = 0.2; $('override').value = '';
+      $('a3').value = 0; $('a2').value = 1; $('a1').value = 0; $('a0').value = 0;
+      resetTable(); resDiv.textContent = '';
+      updateFormulaStrings(); redraw([], readCoefs());
+    });
+
+    // init
+    updateFormulaStrings();
+    redraw([], readCoefs());
+    ['a0','a1','a2','a3'].forEach(id => $(id).addEventListener('input', updateFormulaStrings));
+  </script>
+</body>
+</html>
