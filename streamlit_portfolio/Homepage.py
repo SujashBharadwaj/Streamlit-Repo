@@ -3,6 +3,7 @@ import base64
 import re
 from pathlib import Path
 from typing import Dict, List, Tuple
+import random
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -559,6 +560,13 @@ elif st.session_state["page"] == "Blog":
             post = next(p for p in filtered if p["title"] == selected)
             st.session_state["selected_post"] = str(post["path"])
 
+            is_oee_post = (
+                "oee" in post["title"].lower()
+                or "overall equipment effectiveness" in post["title"].lower()
+                or post["path"].stem.lower().endswith("oee")
+                or "oee" in post["path"].stem.lower()
+            )   
+
             st.markdown(f"### {post['title']}")
             meta_bits = []
             if post["date"]:
@@ -571,6 +579,66 @@ elif st.session_state["page"] == "Blog":
             st.markdown("---")
             content = normalize_math(post["content"])
             st.markdown(content, unsafe_allow_html=True)
+
+            if is_oee_post:
+                st.markdown("---")
+                st.markdown("## Interactive OEE Demo")
+
+                with st.expander("Show Python code"):
+                    st.code(
+                        """def compute_oee(planned_time_min, downtime_min, total_count, good_count, ideal_cycle_time_sec):
+                planned_time_sec = planned_time_min * 60
+                downtime_sec = downtime_min * 60
+                run_time_sec = planned_time_sec - downtime_sec
+
+                availability = run_time_sec / planned_time_sec
+                performance = (total_count * ideal_cycle_time_sec) / run_time_sec
+                quality = good_count / total_count
+                oee = availability * performance * quality
+                return availability, performance, quality, oee""",
+                        language="python",
+                    )   
+
+                if st.button("Run randomized example", key="run_oee_demo"):
+                    planned_time_min = random.choice([420, 450, 480])
+                    downtime_min = random.randint(20, 90)
+
+                    total_count = random.randint(700, 1600)
+                    scrap = random.randint(0, int(0.12 * total_count))
+                    good_count = total_count - scrap
+
+                    ideal_cycle_time_sec = random.choice([18, 20, 22, 24, 26])
+
+                    planned_time_sec = planned_time_min * 60
+                    downtime_sec = downtime_min * 60
+                    run_time_sec = planned_time_sec - downtime_sec
+
+                    availability = run_time_sec / planned_time_sec if planned_time_sec > 0 else 0.0
+                    performance = (total_count * ideal_cycle_time_sec) / run_time_sec if run_time_sec > 0 else 0.0
+                    quality = good_count / total_count if total_count > 0 else 0.0
+
+                    availability = max(0.0, min(1.0, availability))
+                    performance  = max(0.0, min(1.0, performance))
+                    quality      = max(0.0, min(1.0, quality))
+                    oee = availability * performance * quality
+
+                    st.markdown("### Inputs")
+                    st.write(
+                        {
+                            "planned_time_min": planned_time_min,
+                            "downtime_min": downtime_min,
+                            "total_count": total_count,
+                            "good_count": good_count,
+                            "ideal_cycle_time_sec": ideal_cycle_time_sec,
+                        }
+                    )   
+
+                    st.markdown("### Outputs")
+                    c1, c2, c3, c4 = st.columns(4)
+                    c1.metric("Availability", f"{availability*100:.1f}%")
+                    c2.metric("Performance", f"{performance*100:.1f}%")
+                    c3.metric("Quality", f"{quality*100:.1f}%")
+                    c4.metric("OEE", f"{oee*100:.1f}%")
 
 elif st.session_state["page"] == "About":
     st.markdown("## About")
