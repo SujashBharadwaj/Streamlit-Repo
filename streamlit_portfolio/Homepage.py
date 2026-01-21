@@ -1,13 +1,12 @@
 # Homepage.py
 import base64
 import re
+import random
 from pathlib import Path
 from typing import Dict, List, Tuple
-import random
 
 import streamlit as st
 import streamlit.components.v1 as components
-
 
 # Try to use BeautifulSoup if available (for parsing your existing HTML projects index)
 try:
@@ -28,6 +27,9 @@ ROOT = Path(__file__).parent
 ASSETS = ROOT / "assets"
 POSTS_DIR = ROOT / "posts"
 PROJECTS_DIR = ROOT / "projects_static"
+
+# Marker heading that exists in your OEE MD and should be replaced by the interactive demo
+OEE_MARKER = "## A simple OEE calculation snippet (Python)"
 
 
 # ---------------------------
@@ -51,13 +53,11 @@ st.markdown(
         --shadow:0 10px 30px rgba(0,0,0,.45);
       }
 
-      /* Base fonts */
       html, body, [class*="css"]  {
         font-family: 'Crimson Text', serif !important;
         color: var(--text) !important;
       }
 
-      /* Headings / labels */
       h1, h2, h3, h4, h5, h6,
       .stRadio label, .stButton button, .stDownloadButton button,
       [data-testid="stSidebar"] * {
@@ -65,15 +65,12 @@ st.markdown(
         letter-spacing: 0.2px;
       }
 
-      /* Layout */
       .block-container { padding-top: 1.8rem; max-width: 1120px; }
       .stApp { background: var(--bg); }
 
-      /* Links */
       a { color: var(--accent) !important; text-decoration: none; }
       a:hover { text-decoration: underline; }
 
-      /* Cards */
       .card {
         border: 1px solid var(--border);
         background: linear-gradient(180deg, rgba(14,31,24,.98), rgba(11,20,17,.98));
@@ -98,7 +95,6 @@ st.markdown(
         font-size: 0.95rem;
       }
 
-      /* Buttons */
       .stButton button, .stDownloadButton button {
         border-radius: 12px !important;
         border: 1px solid rgba(229,231,235,.14) !important;
@@ -111,46 +107,22 @@ st.markdown(
         transform: translateY(-1px);
       }
 
-      /* Sidebar */
       [data-testid="stSidebar"] {
         background: rgba(11,20,17,.92);
         border-right: 1px solid rgba(229,231,235,.10);
       }
       [data-testid="stSidebar"] .block-container { padding-top: 1.6rem; }
 
-      /* Icons */
-      .icon-row{
-        display:flex;
-        gap:12px;
-        align-items:center;
-        margin-top:10px;
-      }
-      .icon-link{
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        width:40px; height:40px;
-        border-radius:12px;
-        border:1px solid rgba(229,231,235,.12);
-        background: rgba(229,231,235,.06);
-        box-shadow: 0 10px 30px rgba(0,0,0,.20);
-        transition: transform .12s ease;
-      }
-      .icon-link:hover{
-        border-color: rgba(163,230,53,.28);
-        transform: translateY(-1px);
-      }
-      .icon{
-        width:22px; height:22px;
-        fill: rgba(229,231,235,.92);
-      }
-      .icon-link:hover .icon{
-        fill: var(--accent);
-      }
-
-      /* Improve markdown readability */
       p, li { font-size: 1.08rem; line-height: 1.7; }
       code { background: rgba(229,231,235,.06) !important; }
+
+      .oee-box{
+        border:1px solid rgba(229,231,235,.10);
+        background: rgba(229,231,235,.04);
+        border-radius: 14px;
+        padding: 14px 14px;
+        margin-top: 10px;
+      }
     </style>
     """,
     unsafe_allow_html=True,
@@ -211,7 +183,6 @@ def load_projects() -> List[Dict]:
     projects: List[Dict] = []
     idx = PROJECTS_DIR / "index.html"
 
-    # Parse existing HTML index if possible
     if idx.exists() and BeautifulSoup is not None:
         try:
             soup = BeautifulSoup(read_text(idx), "html.parser")
@@ -225,7 +196,6 @@ def load_projects() -> List[Dict]:
         except Exception:
             projects = []
 
-    # Fallback scan folders
     if not projects and PROJECTS_DIR.exists():
         for p in sorted(PROJECTS_DIR.iterdir()):
             if p.is_dir() and not p.name.startswith("."):
@@ -274,14 +244,12 @@ def card(title: str, body: str, meta: str = "", extra_html: str = ""):
         unsafe_allow_html=True,
     )
 
-def quick_links(email: str, github_url: str, linkedin_url: str):
-    # mailto for email
-    mailto = f"mailto:{email}"
 
+def quick_links(email: str, github_url: str, linkedin_url: str):
+    mailto = f"mailto:{email}"
     html = f"""
     <div style="display:flex; gap:12px; align-items:center; margin-top:10px;">
 
-      <!-- Email -->
       <a href="{mailto}" target="_blank" rel="noopener noreferrer" title="Email"
          style="display:inline-flex; align-items:center; justify-content:center;
                 width:42px; height:42px; border-radius:12px;
@@ -295,7 +263,6 @@ def quick_links(email: str, github_url: str, linkedin_url: str):
         </svg>
       </a>
 
-      <!-- GitHub -->
       <a href="{github_url}" target="_blank" rel="noopener noreferrer" title="GitHub"
          style="display:inline-flex; align-items:center; justify-content:center;
                 width:42px; height:42px; border-radius:12px;
@@ -309,7 +276,6 @@ def quick_links(email: str, github_url: str, linkedin_url: str):
         </svg>
       </a>
 
-      <!-- LinkedIn -->
       <a href="{linkedin_url}" target="_blank" rel="noopener noreferrer" title="LinkedIn"
          style="display:inline-flex; align-items:center; justify-content:center;
                 width:42px; height:42px; border-radius:12px;
@@ -326,7 +292,6 @@ def quick_links(email: str, github_url: str, linkedin_url: str):
     </div>
 
     <script>
-      // hover color to lime
       const links = document.querySelectorAll('a');
       links.forEach(a => {{
         a.addEventListener('mouseenter', () => {{
@@ -346,11 +311,133 @@ def quick_links(email: str, github_url: str, linkedin_url: str):
     """
     components.html(html, height=70)
 
+
 def normalize_math(md_text: str) -> str:
-    # Make common LaTeX wrappers Streamlit-friendly
     md_text = md_text.replace(r"\(", "$").replace(r"\)", "$")
     md_text = md_text.replace(r"\[", "$$").replace(r"\]", "$$")
     return md_text
+
+
+def compute_oee(planned_time_sec: int, downtime_sec: int, total_count: int, good_count: int, ideal_cycle_time_sec: int) -> Dict[str, float]:
+    run_time = planned_time_sec - downtime_sec
+    if planned_time_sec <= 0 or run_time <= 0 or total_count <= 0 or good_count < 0:
+        return {"availability": 0.0, "performance": 0.0, "quality": 0.0, "oee": 0.0}
+
+    availability = run_time / planned_time_sec
+    performance = (total_count * ideal_cycle_time_sec) / run_time
+    quality = good_count / total_count
+
+    availability = max(0.0, min(1.0, availability))
+    performance = max(0.0, min(1.0, performance))
+    quality = max(0.0, min(1.0, quality))
+
+    oee = availability * performance * quality
+    return {"availability": availability, "performance": performance, "quality": quality, "oee": oee}
+
+
+def render_oee_interactive():
+    st.markdown("## Interactive OEE calculation (click to run)")
+    st.markdown(
+        "<div class='muted'>This demo generates a realistic shift scenario, calculates OEE, and tells you what to fix first based on the biggest loss.</div>",
+        unsafe_allow_html=True,
+    )
+
+    cA, cB = st.columns([1, 1])
+    with cA:
+        seed = st.number_input("Optional seed (repeat the same example)", min_value=0, max_value=999999, value=0, step=1)
+    with cB:
+        st.markdown("<div class='tiny'>Tip: set seed to 0 for fresh random outputs.</div>", unsafe_allow_html=True)
+
+    run = st.button("Run randomized example", key="run_oee_demo")
+
+    with st.expander("Show Python code"):
+        st.code(
+            """def compute_oee(planned_time_sec, downtime_sec, total_count, good_count, ideal_cycle_time_sec):
+    run_time = planned_time_sec - downtime_sec
+    availability = run_time / planned_time_sec
+    performance  = (total_count * ideal_cycle_time_sec) / run_time
+    quality      = good_count / total_count
+    oee = availability * performance * quality
+    return availability, performance, quality, oee
+""",
+            language="python",
+        )
+
+    if not run:
+        st.markdown("<div class='oee-box tiny'>Click the button to generate inputs and see the output metrics + takeaway.</div>", unsafe_allow_html=True)
+        return
+
+    if seed != 0:
+        random.seed(int(seed))
+
+    planned_time_min = random.choice([420, 450, 480])      # 7h, 7.5h, 8h
+    downtime_min = random.randint(15, 90)
+    total_count = random.randint(700, 1600)
+    scrap = random.randint(0, max(1, int(0.12 * total_count)))
+    good_count = max(0, total_count - scrap)
+    ideal_cycle_time_sec = random.choice([18, 20, 22, 24, 26])
+
+    planned_time_sec = planned_time_min * 60
+    downtime_sec = downtime_min * 60
+
+    out = compute_oee(
+        planned_time_sec=planned_time_sec,
+        downtime_sec=downtime_sec,
+        total_count=total_count,
+        good_count=good_count,
+        ideal_cycle_time_sec=ideal_cycle_time_sec,
+    )
+
+    st.markdown("### Inputs")
+    st.write(
+        {
+            "planned_time_min": planned_time_min,
+            "downtime_min": downtime_min,
+            "total_count": total_count,
+            "good_count": good_count,
+            "ideal_cycle_time_sec": ideal_cycle_time_sec,
+        }
+    )
+
+    st.markdown("### Outputs")
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Availability", f"{out['availability']*100:.1f}%")
+    c2.metric("Performance", f"{out['performance']*100:.1f}%")
+    c3.metric("Quality", f"{out['quality']*100:.1f}%")
+    c4.metric("OEE", f"{out['oee']*100:.1f}%")
+
+    # Key takeaway generator based on biggest loss
+    losses = {
+        "Availability (downtime, setups, breakdowns)": 1 - out["availability"],
+        "Performance (micro-stops, slow cycles, minor jams)": 1 - out["performance"],
+        "Quality (scrap, rework, startup rejects)": 1 - out["quality"],
+    }
+    worst = max(losses, key=losses.get)
+    worst_loss = losses[worst]
+
+    st.markdown("### Key takeaway")
+    if worst_loss < 0.04:
+        st.success(
+            "This run is fairly balanced. Biggest gains come from tightening measurement, standard work, and small continuous improvements."
+        )
+    else:
+        if "Availability" in worst:
+            st.info(
+                "Availability is the main limiter. Reduce unplanned stops, improve changeovers, and shorten maintenance response time."
+            )
+        elif "Performance" in worst:
+            st.info(
+                "Performance is the main limiter. Hunt micro-stops and speed losses: feeding issues, small jams, slow cycles, and drift from the ideal."
+            )
+        else:
+            st.info(
+                "Quality is the main limiter. Focus on defect root causes, startup stability, process parameters, and catching issues earlier in the line."
+            )
+
+    st.markdown(
+        f"<div class='tiny'>Biggest loss in this run: <b>{worst}</b> (approx. {(worst_loss*100):.1f}% loss)</div>",
+        unsafe_allow_html=True,
+    )
 
 
 # ---------------------------
@@ -360,7 +447,7 @@ posts = load_posts()
 projects = load_projects()
 
 # ---------------------------
-# Navigation state (no weird overrides)
+# Navigation state
 # ---------------------------
 PAGES = ["Home", "Projects", "Blog", "About"]
 if "page" not in st.session_state:
@@ -377,6 +464,7 @@ st.sidebar.markdown("")
 current_index = PAGES.index(st.session_state["page"]) if st.session_state["page"] in PAGES else 0
 page = st.sidebar.radio("Navigate", PAGES, index=current_index, label_visibility="collapsed")
 st.session_state["page"] = page
+
 
 # ---------------------------
 # Pages
@@ -455,7 +543,7 @@ if st.session_state["page"] == "Home":
             email="sujashbharadwaj10@gmail.com",
             github_url="https://github.com/SujashBharadwaj",
             linkedin_url="https://www.linkedin.com/in/sujash-bharadwaj-14752827a/",
-)
+        )
 
 elif st.session_state["page"] == "Projects":
     st.markdown("## Projects")
@@ -468,7 +556,6 @@ elif st.session_state["page"] == "Projects":
         titles = [p["title"] for p in projects]
         slug_by_title = {p["title"]: p["slug"] for p in projects}
 
-        # default selection from session
         default_title = None
         if st.session_state["selected_project"]:
             for p in projects:
@@ -548,7 +635,6 @@ elif st.session_state["page"] == "Blog":
         else:
             post_titles = [p["title"] for p in filtered]
 
-            # default from session
             default_idx = 0
             if st.session_state["selected_post"]:
                 for i, p in enumerate(filtered):
@@ -565,7 +651,7 @@ elif st.session_state["page"] == "Blog":
                 or "overall equipment effectiveness" in post["title"].lower()
                 or post["path"].stem.lower().endswith("oee")
                 or "oee" in post["path"].stem.lower()
-            )   
+            )
 
             st.markdown(f"### {post['title']}")
             meta_bits = []
@@ -577,68 +663,24 @@ elif st.session_state["page"] == "Blog":
                 st.markdown(f"<div class='tiny'>{' | '.join(meta_bits)}</div>", unsafe_allow_html=True)
 
             st.markdown("---")
+
             content = normalize_math(post["content"])
-            st.markdown(content, unsafe_allow_html=True)
 
-            if is_oee_post:
+            # Replace the snippet section with interactive demo for OEE post
+            if is_oee_post and OEE_MARKER in content:
+                before, after = content.split(OEE_MARKER, 1)
+                st.markdown(before, unsafe_allow_html=True)
                 st.markdown("---")
-                st.markdown("## Interactive OEE Demo")
+                render_oee_interactive()
 
-                with st.expander("Show Python code"):
-                    st.code(
-                        """def compute_oee(planned_time_min, downtime_min, total_count, good_count, ideal_cycle_time_sec):
-                planned_time_sec = planned_time_min * 60
-                downtime_sec = downtime_min * 60
-                run_time_sec = planned_time_sec - downtime_sec
-
-                availability = run_time_sec / planned_time_sec
-                performance = (total_count * ideal_cycle_time_sec) / run_time_sec
-                quality = good_count / total_count
-                oee = availability * performance * quality
-                return availability, performance, quality, oee""",
-                        language="python",
-                    )   
-
-                if st.button("Run randomized example", key="run_oee_demo"):
-                    planned_time_min = random.choice([420, 450, 480])
-                    downtime_min = random.randint(20, 90)
-
-                    total_count = random.randint(700, 1600)
-                    scrap = random.randint(0, int(0.12 * total_count))
-                    good_count = total_count - scrap
-
-                    ideal_cycle_time_sec = random.choice([18, 20, 22, 24, 26])
-
-                    planned_time_sec = planned_time_min * 60
-                    downtime_sec = downtime_min * 60
-                    run_time_sec = planned_time_sec - downtime_sec
-
-                    availability = run_time_sec / planned_time_sec if planned_time_sec > 0 else 0.0
-                    performance = (total_count * ideal_cycle_time_sec) / run_time_sec if run_time_sec > 0 else 0.0
-                    quality = good_count / total_count if total_count > 0 else 0.0
-
-                    availability = max(0.0, min(1.0, availability))
-                    performance  = max(0.0, min(1.0, performance))
-                    quality      = max(0.0, min(1.0, quality))
-                    oee = availability * performance * quality
-
-                    st.markdown("### Inputs")
-                    st.write(
-                        {
-                            "planned_time_min": planned_time_min,
-                            "downtime_min": downtime_min,
-                            "total_count": total_count,
-                            "good_count": good_count,
-                            "ideal_cycle_time_sec": ideal_cycle_time_sec,
-                        }
-                    )   
-
-                    st.markdown("### Outputs")
-                    c1, c2, c3, c4 = st.columns(4)
-                    c1.metric("Availability", f"{availability*100:.1f}%")
-                    c2.metric("Performance", f"{performance*100:.1f}%")
-                    c3.metric("Quality", f"{quality*100:.1f}%")
-                    c4.metric("OEE", f"{oee*100:.1f}%")
+                # remove the old fenced python block if it immediately follows the marker in "after"
+                # (so the old snippet doesn't show under the demo)
+                after_clean = re.sub(r"^\s*```python[\s\S]*?```\s*", "", after, count=1).lstrip()
+                st.markdown("---")
+                st.markdown(after_clean, unsafe_allow_html=True)
+            else:
+                # normal rendering for all other posts
+                st.markdown(content, unsafe_allow_html=True)
 
 elif st.session_state["page"] == "About":
     st.markdown("## About")
