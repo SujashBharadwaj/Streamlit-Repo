@@ -336,8 +336,17 @@ def embed_pdf(pdf_path: Path, height: int = 860, mode: str = "Native Streamlit P
     data = pdf_path.read_bytes()
     b64 = base64.b64encode(data).decode("utf-8")
     if mode == "Native Streamlit PDF":
-        st.pdf(data, width="stretch")
-        return
+        try:
+            # Newer Streamlit builds support width="stretch"
+            st.pdf(data, width="stretch")
+            return
+        except TypeError:
+            # Older builds reject width kwarg
+            try:
+                st.pdf(data)
+                return
+            except Exception:
+                st.info("Native PDF preview is unavailable in this runtime. Falling back to embedded preview.")
 
     if mode == "Embedded HTML (data URL)":
         html = f"""
