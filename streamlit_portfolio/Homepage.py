@@ -933,6 +933,11 @@ elif st.session_state["page"] == "Projects":
             value=False,
             help="Some Chrome setups block embedded content. Keep this off to use download-only mode.",
         )
+        use_legacy_project_page = st.toggle(
+            "Use legacy project HTML page",
+            value=True,
+            help="Render the original projects_static/<project>/index.html page, like the old setup.",
+        )
         preview_mode = st.selectbox(
             "PDF preview mode",
             ["Native Streamlit PDF", "Embedded HTML (data URL)", "Blob URL (browser-safe fallback)"],
@@ -941,13 +946,13 @@ elif st.session_state["page"] == "Projects":
         )
 
         pdfs, others = list_project_files(slug)
-        project_embed_html = ""
-        if slug == "wall-jump-maze":
-            project_embed_html = read_project_embed_html(slug)
+        project_embed_html = read_project_embed_html(slug)
 
         cols = st.columns([1.4, 1], gap="large")
         with cols[0]:
-            if not embed_preview:
+            if use_legacy_project_page and project_embed_html:
+                components.html(project_embed_html, height=920, scrolling=True)
+            elif not embed_preview:
                 st.info("Preview is disabled. Use the downloads on the right.")
             elif project_embed_html:
                 components.html(project_embed_html, height=760, scrolling=False)
