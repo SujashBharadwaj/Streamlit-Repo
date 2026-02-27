@@ -4,7 +4,7 @@ import math
 import re
 import random
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -31,6 +31,24 @@ PROJECTS_DIR = ROOT / "projects_static"
 
 # Marker heading that exists in your OEE MD and should be replaced by the interactive demo
 OEE_MARKER = "## A simple OEE calculation snippet (Python)"
+PROJECT_META: Dict[str, Dict[str, Any]] = {
+    "wall-jump-maze": {
+        "eyebrow": "Interactive Mini Game",
+        "tags": ["Canvas API", "JavaScript", "Game Logic", "Streamlit Embed"],
+    },
+    "EnergyEquitiesMI": {
+        "eyebrow": "Operations + Reporting",
+        "tags": ["Google Sheets", "MI Reporting", "Data QA", "Process Documentation"],
+    },
+    "commodity-equity-linkages": {
+        "eyebrow": "Market Analysis",
+        "tags": ["Econometrics", "Rolling Betas", "Causality Tests", "Nifty 50"],
+    },
+    "BDMcapstone": {
+        "eyebrow": "Capstone Study",
+        "tags": ["Customer Analytics", "Retention", "Business Research", "Presentation"],
+    },
+}
 
 
 # ---------------------------
@@ -123,6 +141,44 @@ st.markdown(
         border-radius: 14px;
         padding: 14px 14px;
         margin-top: 10px;
+      }
+
+      .project-card{
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, rgba(14,31,24,.98), rgba(11,20,17,.98));
+        border-radius: 16px;
+        padding: 14px 16px;
+        min-height: 160px;
+        margin-bottom: 8px;
+      }
+
+      .project-eyebrow{
+        color: rgba(163,230,53,.92);
+        font-size: .88rem;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        margin-bottom: 4px;
+      }
+
+      .project-title{
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+
+      .project-chips{
+        margin-top: 10px;
+      }
+
+      .project-chip{
+        display: inline-block;
+        padding: 2px 8px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        border-radius: 999px;
+        border: 1px solid rgba(229,231,235,.16);
+        background: rgba(229,231,235,.05);
+        font-size: .82rem;
       }
     </style>
     """,
@@ -228,16 +284,46 @@ def read_project_embed_html(slug: str) -> str:
 def embed_pdf(pdf_path: Path, height: int = 860):
     data = pdf_path.read_bytes()
     b64 = base64.b64encode(data).decode("utf-8")
+    # Large data: URLs can be blocked by Chrome. Use Blob URL in the browser instead.
     html = f"""
-    <iframe
-      src="data:application/pdf;base64,{b64}"
-      width="100%"
-      height="{height}"
-      style="border:1px solid rgba(229,231,235,.10); border-radius: 14px; background: rgba(11,20,17,.60);"
-      type="application/pdf"
-    ></iframe>
+    <div id="pdf-wrap" style="width:100%;">
+      <div id="pdf-msg" style="color:rgba(229,231,235,.78);font-size:.92rem;margin:0 0 8px 2px;"></div>
+      <iframe
+        id="pdf-frame"
+        width="100%"
+        height="{height}"
+        style="border:1px solid rgba(229,231,235,.10); border-radius: 14px; background: rgba(11,20,17,.60);"
+      ></iframe>
+    </div>
+    <script>
+      (function() {{
+        const b64 = "{b64}";
+        const msg = document.getElementById("pdf-msg");
+        const frame = document.getElementById("pdf-frame");
+
+        function b64ToUint8Array(base64) {{
+          const binary = atob(base64);
+          const len = binary.length;
+          const bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+          return bytes;
+        }}
+
+        try {{
+          const bytes = b64ToUint8Array(b64);
+          const blob = new Blob([bytes], {{ type: "application/pdf" }});
+          const blobUrl = URL.createObjectURL(blob);
+          frame.src = blobUrl;
+          if (bytes.length > 12 * 1024 * 1024) {{
+            msg.textContent = "Large PDF detected. If preview is slow, use the download button on the right.";
+          }}
+        }} catch (err) {{
+          msg.textContent = "Preview could not be loaded in this browser. Use the download button.";
+        }}
+      }})();
+    </script>
     """
-    st.markdown(html, unsafe_allow_html=True)
+    components.html(html, height=height + 34, scrolling=False)
 
 
 def card(title: str, body: str, meta: str = "", extra_html: str = ""):
@@ -700,32 +786,77 @@ if st.session_state["page"] == "Home":
 
 elif st.session_state["page"] == "Projects":
     st.markdown("## Projects")
-    st.markdown('<div class="muted">Reports, dashboards, and longer experiments.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="muted">Reports, dashboards, and interactive builds with downloadable outputs.</div>', unsafe_allow_html=True)
     st.markdown("")
 
     if not projects:
         st.info("No projects found.")
     else:
+        slugs = [p["slug"] for p in projects]
+        if st.session_state["selected_project"] not in slugs:
+            st.session_state["selected_project"] = projects[0]["slug"]
+
+        st.markdown("### Featured")
+        grid_cols = st.columns(2, gap="medium")
+        for i, p in enumerate(projects):
+            meta = PROJECT_META.get(p["slug"], {})
+            eyebrow = meta.get("eyebrow", "Project")
+            tags = meta.get("tags", [])
+            chips = "".join([f"<span class='project-chip'>{t}</span>" for t in tags[:4]])
+
+            with grid_cols[i % 2]:
+                st.markdown(
+                    f"""
+                    <div class="project-card">
+                      <div class="project-eyebrow">{eyebrow}</div>
+                      <div class="project-title">{p["title"]}</div>
+                      <div class="muted">{p["desc"]}</div>
+                      <div class="project-chips">{chips}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                if st.button("Open project", key=f"open_project_{p['slug']}", use_container_width=True):
+                    st.session_state["selected_project"] = p["slug"]
+                    st.rerun()
+
+        st.markdown("")
         titles = [p["title"] for p in projects]
         slug_by_title = {p["title"]: p["slug"] for p in projects}
-
-        default_title = None
-        if st.session_state["selected_project"]:
-            for p in projects:
-                if p["slug"] == st.session_state["selected_project"]:
-                    default_title = p["title"]
-                    break
-
-        idx = titles.index(default_title) if (default_title in titles) else 0
-        selected_title = st.selectbox("Select a project", titles, index=idx)
+        selected_title = next(p["title"] for p in projects if p["slug"] == st.session_state["selected_project"])
+        selected_title = st.selectbox(
+            "Quick jump",
+            titles,
+            index=titles.index(selected_title),
+            help="Use this if you want to jump directly to a project.",
+        )
 
         slug = slug_by_title[selected_title]
         st.session_state["selected_project"] = slug
 
         desc = next((p["desc"] for p in projects if p["slug"] == slug), "")
+        meta = PROJECT_META.get(slug, {})
+        detail_tags = meta.get("tags", [])
+        detail_chips = "".join([f"<span class='project-chip'>{t}</span>" for t in detail_tags])
         if desc:
-            st.markdown(f'<div class="muted">{desc}</div>', unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div class="card" style="margin-top:8px;">
+                  <div class="project-eyebrow">{meta.get("eyebrow", "Project")}</div>
+                  <div style="font-size:1.35rem;font-weight:800;">{selected_title}</div>
+                  <div class="muted" style="margin-top:8px;">{desc}</div>
+                  <div class="project-chips">{detail_chips}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
             st.markdown("")
+
+        embed_preview = st.toggle(
+            "Enable embedded preview",
+            value=False,
+            help="Some Chrome setups block embedded content. Keep this off to use download-only mode.",
+        )
 
         pdfs, others = list_project_files(slug)
         project_embed_html = ""
@@ -734,7 +865,9 @@ elif st.session_state["page"] == "Projects":
 
         cols = st.columns([1.4, 1], gap="large")
         with cols[0]:
-            if project_embed_html:
+            if not embed_preview:
+                st.info("Preview is disabled. Use the downloads on the right.")
+            elif project_embed_html:
                 components.html(project_embed_html, height=760, scrolling=False)
             elif pdfs:
                 pdf_names = [p.name for p in pdfs]

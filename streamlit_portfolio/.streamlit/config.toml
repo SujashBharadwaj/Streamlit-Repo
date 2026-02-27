@@ -4,3 +4,9 @@ backgroundColor="#071A14"
 secondaryBackgroundColor="#0B1411"
 textColor="#E5E7EB"
 primaryColor="#10B981"
+
+[theme.sidebar]
+backgroundColor="#0B1411"
+secondaryBackgroundColor="#0E1F18"
+textColor="#E5E7EB"
+primaryColor="#10B981"
