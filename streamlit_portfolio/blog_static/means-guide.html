@@ -238,7 +238,7 @@
     const parseList = (str) =>
       str.split(/[\s,]+/).map(s => s.trim()).filter(Boolean).map(Number).filter(n => Number.isFinite(n));
 
-    function round(x){ return (x===undefined || isNaN(x)) ? '—' : (+x).toFixed(6); }
+    function round(x){ return (x===undefined || isNaN(x)) ? '-' : (+x).toFixed(6); }
 
     // Means
     const am = xs => xs.reduce((a,b)=>a+b,0)/xs.length;
@@ -307,7 +307,7 @@
         mp: powerMean(xs, p)
       };
 
-      const delta = (v, base) => (v===undefined ? '—' : (v-base).toFixed(6));
+      const delta = (v, base) => (v===undefined ? '-' : (v-base).toFixed(6));
       const base = vals.am;
 
       const rows = [
@@ -324,7 +324,7 @@
         const tr = document.createElement('tr');
         const td1 = document.createElement('td'); td1.textContent = name;
         const td2 = document.createElement('td'); td2.textContent = round(vals[key]);
-        const td3 = document.createElement('td'); td3.textContent = (base!==undefined) ? delta(vals[key], base) : '—';
+        const td3 = document.createElement('td'); td3.textContent = (base!==undefined) ? delta(vals[key], base) : '-';
         tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); resT.appendChild(tr);
         if (meanChks().includes(key) && vals[key] !== undefined){
           const chip = document.createElement('span'); chip.className = 'chip';

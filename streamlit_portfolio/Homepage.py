@@ -1,5 +1,6 @@
 # Homepage.py
 import base64
+import math
 import re
 import random
 from pathlib import Path
@@ -324,6 +325,150 @@ def normalize_math(md_text: str) -> str:
     md_text = md_text.replace(r"\(", "$").replace(r"\)", "$")
     md_text = md_text.replace(r"\[", "$$").replace(r"\]", "$$")
     return md_text
+
+
+def parse_numeric_list(raw: str) -> List[float]:
+    parts = re.split(r"[\s,]+", raw.strip())
+    nums: List[float] = []
+    for p in parts:
+        if not p:
+            continue
+        try:
+            nums.append(float(p))
+        except ValueError:
+            continue
+    return nums
+
+
+def compute_means_bundle(values: List[float], weights: List[float], trim_pct: float, p: float) -> Dict[str, float]:
+    out: Dict[str, float] = {}
+    n = len(values)
+    if n == 0:
+        return out
+
+    out["Arithmetic"] = sum(values) / n
+    out["RMS"] = math.sqrt(sum(v * v for v in values) / n)
+
+    all_positive = all(v > 0 for v in values)
+    if all_positive:
+        out["Geometric"] = math.exp(sum(math.log(v) for v in values) / n)
+        denom = sum(1.0 / v for v in values)
+        if denom != 0:
+            out["Harmonic"] = n / denom
+        if p <= 0:
+            out["Power (Mp)"] = (sum(v ** p for v in values) / n) ** (1.0 / p) if p != 0 else out["Geometric"]
+    elif p > 0:
+        near_integer = abs(p - round(p)) < 1e-9
+        if near_integer or all(v >= 0 for v in values):
+            out["Power (Mp)"] = (sum(v ** p for v in values) / n) ** (1.0 / p)
+
+    if p > 0 and "Power (Mp)" not in out:
+        if all(v >= 0 for v in values):
+            out["Power (Mp)"] = (sum(v ** p for v in values) / n) ** (1.0 / p)
+
+    if all(v >= 0 for v in values) and sum(values) > 0:
+        out["Contraharmonic"] = sum(v * v for v in values) / sum(values)
+
+    if weights and len(weights) == n and sum(weights) != 0:
+        out["Weighted"] = sum(v * w for v, w in zip(values, weights)) / sum(weights)
+
+    sorted_vals = sorted(values)
+    k = int(n * max(0.0, min(40.0, trim_pct)) / 100.0)
+    if 2 * k < n:
+        trimmed = sorted_vals[k : n - k]
+        out["Trimmed"] = sum(trimmed) / len(trimmed)
+
+    return out
+
+
+def render_means_interactive():
+    st.markdown("## Interactive playground")
+    st.markdown("<div class='muted'>Try your own values and compare mean choices.</div>", unsafe_allow_html=True)
+
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        raw_values = st.text_area("Numbers (comma, space, or newline)", value="1, 2, 8", key="means_values")
+    with c2:
+        raw_weights = st.text_input("Weights (optional)", value="", key="means_weights")
+    with c3:
+        trim_pct = st.slider("Trim percent each tail", min_value=0, max_value=40, value=0, key="means_trim")
+
+    p_val = st.slider("Power mean p", min_value=-2.0, max_value=4.0, value=1.0, step=0.1, key="means_p")
+    selected = st.multiselect(
+        "Show on chart",
+        ["Arithmetic", "Geometric", "Harmonic", "RMS", "Contraharmonic", "Weighted", "Trimmed", "Power (Mp)"],
+        default=["Arithmetic", "Geometric", "Harmonic", "RMS", "Power (Mp)"],
+        key="means_show",
+    )
+
+    values = parse_numeric_list(raw_values)
+    weights = parse_numeric_list(raw_weights) if raw_weights.strip() else []
+
+    if not values:
+        st.warning("Enter at least one valid numeric value.")
+        return
+
+    bundle = compute_means_bundle(values, weights, float(trim_pct), float(p_val))
+    am = bundle.get("Arithmetic")
+
+    rows: List[Dict[str, str]] = []
+    for name, val in bundle.items():
+        diff = ""
+        if am is not None:
+            diff = f"{(val - am):.6f}"
+        rows.append({"Mean": name, "Value": f"{val:.6f}", "Difference from AM": diff})
+    st.table(rows)
+
+    chart_vals = {k: v for k, v in bundle.items() if k in selected}
+    if chart_vals:
+        st.bar_chart(chart_vals)
+    st.caption("Notes: GM and HM and Mp with p <= 0 require all values > 0. Contraharmonic requires non-negative values with positive sum.")
+
+
+def render_gradient_descent_interactive():
+    st.markdown("## Interactive playground (1-D, cubic only)")
+    st.markdown("<div class='muted'>Define f(x) = a3x^3 + a2x^2 + a1x + a0 and simulate gradient descent.</div>", unsafe_allow_html=True)
+
+    a_cols = st.columns(4)
+    a3 = a_cols[0].number_input("a3", value=0.0, step=0.1, key="gd_a3")
+    a2 = a_cols[1].number_input("a2", value=1.0, step=0.1, key="gd_a2")
+    a1 = a_cols[2].number_input("a1", value=0.0, step=0.1, key="gd_a1")
+    a0 = a_cols[3].number_input("a0", value=0.0, step=0.1, key="gd_a0")
+
+    c1, c2, c3, c4 = st.columns(4)
+    x0 = c1.number_input("Initial x0", value=2.0, step=0.1, key="gd_x0")
+    alpha = c2.number_input("Learning rate alpha", value=0.2, step=0.01, min_value=0.0001, key="gd_alpha")
+    max_steps = c3.number_input("Max steps", min_value=1, max_value=200, value=20, step=1, key="gd_steps")
+    round_steps = c4.checkbox("Round each step to 2 decimals", value=True, key="gd_round")
+
+    tol = st.number_input("Stop when |f'(x)| < tol", min_value=0.0001, max_value=1.0, value=0.01, step=0.001, key="gd_tol")
+
+    def f(x: float) -> float:
+        return a3 * x * x * x + a2 * x * x + a1 * x + a0
+
+    def df(x: float) -> float:
+        return 3 * a3 * x * x + 2 * a2 * x + a1
+
+    x = float(x0)
+    rows = []
+    diverged = False
+    for step in range(int(max_steps) + 1):
+        fx = f(x)
+        dfx = df(x)
+        rows.append({"Step": step, "x": round(x, 6), "f(x)": round(fx, 6), "f'(x)": round(dfx, 6)})
+        if abs(dfx) < float(tol):
+            break
+        x = x - float(alpha) * dfx
+        if round_steps:
+            x = round(x, 2)
+        if abs(x) > 1e9:
+            diverged = True
+            break
+
+    st.dataframe(rows, use_container_width=True)
+    st.line_chart({"f(x)": [r["f(x)"] for r in rows], "f'(x)": [r["f'(x)"] for r in rows]})
+    if diverged:
+        st.warning("The run diverged. Try a smaller learning rate.")
 
 
 def compute_oee(planned_time_sec: int, downtime_sec: int, total_count: int, good_count: int, ideal_cycle_time_sec: int) -> Dict[str, float]:
@@ -666,7 +811,7 @@ elif st.session_state["page"] == "Blog":
     if not posts:
         st.info("No posts found yet.")
     else:
-        q = st.text_input("Search posts", placeholder="Type to search by title or content…")
+        q = st.text_input("Search posts", placeholder="Type to search by title or content...")
         filtered = posts
         if q.strip():
             qq = q.strip().lower()
@@ -700,13 +845,16 @@ elif st.session_state["page"] == "Blog":
             if post["date"]:
                 meta_bits.append(post["date"])
             if post.get("tags"):
-                meta_bits.append(" • ".join([f"`{t}`" for t in post["tags"]]))
+                meta_bits.append(" | ".join([f"`{t}`" for t in post["tags"]]))
             if meta_bits:
                 st.markdown(f"<div class='tiny'>{' | '.join(meta_bits)}</div>", unsafe_allow_html=True)
 
             st.markdown("---")
 
             content = normalize_math(post["content"])
+            slug = re.sub(r"^\d{4}-\d{2}-\d{2}-", "", post["path"].stem.lower())
+            is_means_post = slug == "means-guide"
+            is_gd_post = slug == "gradient-descent"
 
             # Replace the snippet section with interactive demo for OEE post
             if is_oee_post and OEE_MARKER in content:
@@ -720,6 +868,24 @@ elif st.session_state["page"] == "Blog":
                 after_clean = re.sub(r"^\s*```python[\s\S]*?```\s*", "", after, count=1).lstrip()
                 st.markdown("---")
                 st.markdown(after_clean, unsafe_allow_html=True)
+            elif is_means_post and "## Interactive playground" in content:
+                before, after = content.split("## Interactive playground", 1)
+                st.markdown(before, unsafe_allow_html=True)
+                st.markdown("---")
+                render_means_interactive()
+                if "## Takeaways" in after:
+                    _, tail = after.split("## Takeaways", 1)
+                    st.markdown("---")
+                    st.markdown("## Takeaways" + tail, unsafe_allow_html=True)
+            elif is_gd_post and "## Interactive playground (1-D, cubic only)" in content:
+                before, after = content.split("## Interactive playground (1-D, cubic only)", 1)
+                st.markdown(before, unsafe_allow_html=True)
+                st.markdown("---")
+                render_gradient_descent_interactive()
+                if "## Usage in machine learning" in after:
+                    _, tail = after.split("## Usage in machine learning", 1)
+                    st.markdown("---")
+                    st.markdown("## Usage in machine learning" + tail, unsafe_allow_html=True)
             else:
                 # normal rendering for all other posts
                 st.markdown(content, unsafe_allow_html=True)
@@ -761,3 +927,4 @@ elif st.session_state["page"] == "About":
             github_url="https://github.com/SujashBharadwaj",
             linkedin_url="https://www.linkedin.com/in/sujash-bharadwaj-14752827a/",
         )
+
