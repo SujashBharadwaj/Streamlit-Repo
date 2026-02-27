@@ -216,6 +216,14 @@ def list_project_files(slug: str) -> Tuple[List[Path], List[Path]]:
     return pdfs, others
 
 
+
+def read_project_embed_html(slug: str) -> str:
+    project_html = PROJECTS_DIR / slug / "index.html"
+    if project_html.exists():
+        return read_text(project_html)
+    return ""
+
+
 def embed_pdf(pdf_path: Path, height: int = 860):
     data = pdf_path.read_bytes()
     b64 = base64.b64encode(data).decode("utf-8")
@@ -575,19 +583,35 @@ elif st.session_state["page"] == "Projects":
             st.markdown("")
 
         pdfs, others = list_project_files(slug)
+        project_embed_html = ""
+        if slug == "wall-jump-maze":
+            project_embed_html = read_project_embed_html(slug)
 
         cols = st.columns([1.4, 1], gap="large")
         with cols[0]:
-            if pdfs:
+            if project_embed_html:
+                components.html(project_embed_html, height=760, scrolling=False)
+            elif pdfs:
                 pdf_names = [p.name for p in pdfs]
                 chosen = st.selectbox("View report", pdf_names, index=0)
                 chosen_path = next(p for p in pdfs if p.name == chosen)
                 embed_pdf(chosen_path, height=860)
             else:
-                st.info("No PDF found for this project.")
+                st.info("No project preview found.")
 
         with cols[1]:
             st.markdown("### Downloads")
+
+            if project_embed_html:
+                project_html_path = PROJECTS_DIR / slug / "index.html"
+                st.download_button(
+                    label="Download game HTML",
+                    data=project_html_path.read_bytes(),
+                    file_name="index.html",
+                    mime="text/html",
+                    use_container_width=True,
+                )
+
             if pdfs:
                 for p in pdfs:
                     st.download_button(
@@ -615,6 +639,24 @@ elif st.session_state["page"] == "Projects":
                         mime=mime,
                         use_container_width=True,
                     )
+
+        if slug == "wall-jump-maze":
+            st.markdown("")
+            st.markdown("### Why I Built This")
+            st.markdown(
+                """
+                I wanted to add more interactive displays to my portfolio, and a Pac-Man-inspired mini game felt like a strong way to do it.
+                The goal was to challenge myself to build a clean browser game using only HTML, CSS, JavaScript, and the Canvas API,
+                then embed it inside Streamlit with `st.components.v1.html()`.
+
+                How it works:
+                - The maze is a 2D grid (`1` wall, `0` path, `2` pellet).
+                - You move tile-by-tile with arrow keys and collect pellets to increase score.
+                - A ghost moves through the maze, respects walls, and ends the run on collision.
+                - Press `Space` to activate a short wall-jump window (~300ms) that lets you phase through walls.
+                - Wall jump has a cooldown (~3s), so timing matters.
+                """
+            )
 
 elif st.session_state["page"] == "Blog":
     st.markdown("## Blog")
