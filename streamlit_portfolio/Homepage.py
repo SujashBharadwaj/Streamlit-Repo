@@ -180,6 +180,57 @@ st.markdown(
         background: rgba(229,231,235,.05);
         font-size: .82rem;
       }
+
+      @media (max-width: 900px){
+        .block-container{
+          padding-top: 1.15rem !important;
+          padding-left: 0.9rem !important;
+          padding-right: 0.9rem !important;
+        }
+
+        h1{ font-size: 1.9rem !important; line-height: 1.15 !important; }
+        h2{ font-size: 1.5rem !important; line-height: 1.2 !important; }
+        h3{ font-size: 1.2rem !important; line-height: 1.25 !important; }
+
+        p, li{
+          font-size: 1rem !important;
+          line-height: 1.55 !important;
+        }
+
+        .card{
+          padding: 14px 14px;
+          border-radius: 14px;
+          margin-bottom: 10px;
+        }
+
+        .project-card{
+          min-height: 0;
+          padding: 12px 12px;
+          border-radius: 14px;
+        }
+
+        .project-title{
+          font-size: 1.12rem;
+          line-height: 1.25;
+        }
+
+        .project-chip{
+          font-size: .76rem;
+          padding: 2px 7px;
+          margin-right: 5px;
+          margin-bottom: 5px;
+        }
+
+        .stButton button, .stDownloadButton button{
+          min-height: 2.55rem !important;
+          padding: 0.45rem 0.7rem !important;
+          font-size: 0.95rem !important;
+        }
+
+        [data-testid="stMetricValue"]{
+          font-size: 1.3rem !important;
+        }
+      }
     </style>
     """,
     unsafe_allow_html=True,
