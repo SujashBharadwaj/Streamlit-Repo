@@ -332,10 +332,22 @@ def read_project_embed_html(slug: str) -> str:
     return ""
 
 
-def embed_pdf(pdf_path: Path, height: int = 860):
+def embed_pdf(pdf_path: Path, height: int = 860, mode: str = "Embedded HTML (data URL)"):
     data = pdf_path.read_bytes()
     b64 = base64.b64encode(data).decode("utf-8")
-    # Large data: URLs can be blocked by Chrome. Use Blob URL in the browser instead.
+    if mode == "Embedded HTML (data URL)":
+        html = f"""
+        <iframe
+          src="data:application/pdf;base64,{b64}"
+          width="100%"
+          height="{height}"
+          style="border:1px solid rgba(229,231,235,.10); border-radius: 14px; background: rgba(11,20,17,.60);"
+          type="application/pdf"
+        ></iframe>
+        """
+        st.markdown(html, unsafe_allow_html=True)
+        return
+
     html = f"""
     <div id="pdf-wrap" style="width:100%;">
       <div id="pdf-msg" style="color:rgba(229,231,235,.78);font-size:.92rem;margin:0 0 8px 2px;"></div>
@@ -908,6 +920,12 @@ elif st.session_state["page"] == "Projects":
             value=False,
             help="Some Chrome setups block embedded content. Keep this off to use download-only mode.",
         )
+        preview_mode = st.selectbox(
+            "PDF preview mode",
+            ["Embedded HTML (data URL)", "Blob URL (browser-safe fallback)"],
+            index=0,
+            disabled=not embed_preview,
+        )
 
         pdfs, others = list_project_files(slug)
         project_embed_html = ""
@@ -924,7 +942,8 @@ elif st.session_state["page"] == "Projects":
                 pdf_names = [p.name for p in pdfs]
                 chosen = st.selectbox("View report", pdf_names, index=0)
                 chosen_path = next(p for p in pdfs if p.name == chosen)
-                embed_pdf(chosen_path, height=860)
+                mode = "Embedded HTML (data URL)" if preview_mode.startswith("Embedded") else "Blob URL"
+                embed_pdf(chosen_path, height=860, mode=mode)
             else:
                 st.info("No project preview found.")
 
