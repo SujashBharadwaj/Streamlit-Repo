@@ -332,9 +332,13 @@ def read_project_embed_html(slug: str) -> str:
     return ""
 
 
-def embed_pdf(pdf_path: Path, height: int = 860, mode: str = "Embedded HTML (data URL)"):
+def embed_pdf(pdf_path: Path, height: int = 860, mode: str = "Native Streamlit PDF"):
     data = pdf_path.read_bytes()
     b64 = base64.b64encode(data).decode("utf-8")
+    if mode == "Native Streamlit PDF":
+        st.pdf(data, width="stretch")
+        return
+
     if mode == "Embedded HTML (data URL)":
         html = f"""
         <iframe
@@ -922,7 +926,7 @@ elif st.session_state["page"] == "Projects":
         )
         preview_mode = st.selectbox(
             "PDF preview mode",
-            ["Embedded HTML (data URL)", "Blob URL (browser-safe fallback)"],
+            ["Native Streamlit PDF", "Embedded HTML (data URL)", "Blob URL (browser-safe fallback)"],
             index=0,
             disabled=not embed_preview,
         )
@@ -942,7 +946,12 @@ elif st.session_state["page"] == "Projects":
                 pdf_names = [p.name for p in pdfs]
                 chosen = st.selectbox("View report", pdf_names, index=0)
                 chosen_path = next(p for p in pdfs if p.name == chosen)
-                mode = "Embedded HTML (data URL)" if preview_mode.startswith("Embedded") else "Blob URL"
+                if preview_mode.startswith("Native"):
+                    mode = "Native Streamlit PDF"
+                elif preview_mode.startswith("Embedded"):
+                    mode = "Embedded HTML (data URL)"
+                else:
+                    mode = "Blob URL"
                 embed_pdf(chosen_path, height=860, mode=mode)
             else:
                 st.info("No project preview found.")
