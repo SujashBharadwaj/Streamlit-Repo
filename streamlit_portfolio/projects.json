@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "wall-jump-maze",
+    "title": "Wall Jump Maze Runner",
+    "desc": "Pac-Man-inspired interactive portfolio mini game built in Canvas, with pellet collection, ghost collision, and a timed wall-jump ability.",
+    "eyebrow": "Interactive Mini Game",
+    "tags": ["Canvas API", "JavaScript", "Game Logic", "Streamlit Embed"],
+    "type": "game",
+    "html_file": "index.html"
+  },
+  {
+    "slug": "EnergyEquitiesMI",
+    "title": "Energy Equities MI Reporting",
+    "desc": "Dataset generation, exception monitoring, and MI-style reporting for 10 NSE energy companies.",
+    "eyebrow": "Operations + Reporting",
+    "tags": ["Google Sheets", "MI Reporting", "Data QA", "Process Documentation"],
+    "type": "embed",
+    "sheet_url": "https://docs.google.com/spreadsheets/d/1M6gXq5Dq1Al95RO6OqCx3ZyLTTeW2uLR7vi1UGiqBWk/edit?usp=sharing",
+    "pdf_file": "Process_Report.pdf"
+  },
+  {
+    "slug": "commodity-equity-linkages",
+    "title": "Commodity-Equity Linkages",
+    "desc": "Global commodities vs Nifty 50 with timing, causality, rolling betas, and a ranked indicator dashboard. Embedded full report.",
+    "eyebrow": "Market Analysis",
+    "tags": ["Econometrics", "Rolling Betas", "Causality Tests", "Nifty 50"],
+    "type": "report",
+    "pdf_file": "final_report.pdf"
+  },
+  {
+    "slug": "BDMcapstone",
+    "title": "IITM BDM Capstone",
+    "desc": "Client segmentation and retention analysis for Raftaar. Proposal, midterm, final, and presentation embedded on one page.",
+    "eyebrow": "Capstone Study",
+    "tags": ["Customer Analytics", "Retention", "Business Research", "Presentation"],
+    "type": "multi_report",
+    "pdfs": [
+      {"name": "proposal.pdf", "label": "Proposal"},
+      {"name": "midterm.pdf", "label": "Midterm"},
+      {"name": "final.pdf", "label": "Final"},
+      {"name": "presentation.pdf", "label": "Presentation"}
+    ]
+  }
+]
