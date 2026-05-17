@@ -1,7 +1,7 @@
 import math
 import streamlit as st
 from typing import Dict, List
-from utils.helpers import parse_numeric_list
+from utils.helpers import parse_numeric_list, sanitize_html
 
 
 def compute_means_bundle(values: List[float], weights: List[float], trim_pct: float, p: float) -> Dict[str, float]:
@@ -47,7 +47,7 @@ def compute_means_bundle(values: List[float], weights: List[float], trim_pct: fl
 
 def render_means_interactive():
     st.markdown("## Interactive playground")
-    st.markdown("<div class='muted'>Try your own values and compare mean choices.</div>", unsafe_allow_html=True)
+    st.markdown(sanitize_html("<div class='muted'>Try your own values and compare mean choices.</div>"), unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns(3)
     with c1:

@@ -1,6 +1,8 @@
 import base64
 import json
 import re
+import bleach
+from bleach.css_sanitizer import CSSSanitizer
 import streamlit as st
 import streamlit.components.v1 as components
 from pathlib import Path
@@ -11,11 +13,64 @@ ASSETS = ROOT / "assets"
 POSTS_DIR = ROOT / "posts"
 PROJECTS_DIR = ROOT / "projects_static"
 
+# ---------- HTML sanitisation ----------
+# Allowlist of tags and attributes that our layout CSS actually uses.
+# Everything else (including <script>, <iframe>, event-handler attrs, etc.)
+# is stripped before the content is rendered with unsafe_allow_html=True.
+_ALLOWED_TAGS = [
+    "h1", "h2", "h3", "h4", "h5", "h6",
+    "p", "br", "hr", "blockquote", "pre", "code",
+    "ul", "ol", "li", "dl", "dt", "dd",
+    "a", "img", "em", "strong", "b", "i", "u", "s", "del", "ins",
+    "sub", "sup", "mark", "small", "abbr",
+    "table", "thead", "tbody", "tfoot", "tr", "th", "td", "caption",
+    "div", "span", "figure", "figcaption",
+    "details", "summary",
+    "svg", "path",  # for inline icon SVGs
+]
+
+_ALLOWED_ATTRS = {
+    "*": ["class", "id", "style", "title", "aria-hidden"],
+    "a": ["href", "target", "rel"],
+    "img": ["src", "alt", "width", "height", "loading"],
+    "td": ["colspan", "rowspan"],
+    "th": ["colspan", "rowspan", "scope"],
+    "svg": ["width", "height", "viewBox", "xmlns", "fill"],
+    "path": ["d", "fill", "stroke", "stroke-width"],
+}
+
+_CSS_SANITIZER = CSSSanitizer(
+    allowed_css_properties=[
+        "color", "background", "background-color", "border", "border-color",
+        "border-radius", "border-style", "border-width",
+        "box-shadow", "cursor", "display", "flex", "font-family", "font-size",
+        "font-style", "font-weight", "gap", "height", "letter-spacing",
+        "line-height", "margin", "margin-top", "margin-bottom", "margin-left",
+        "margin-right", "max-width", "min-height", "padding", "padding-top",
+        "padding-bottom", "padding-left", "padding-right", "text-align",
+        "text-decoration", "text-transform", "transition", "transform",
+        "width", "align-items", "justify-content",
+    ]
+)
+
+
+def sanitize_html(html: str) -> str:
+    """Strip dangerous tags/attrs (e.g. <script>, onerror) while keeping
+    the layout-relevant HTML that our CSS relies on."""
+    return bleach.clean(
+        html,
+        tags=_ALLOWED_TAGS,
+        attributes=_ALLOWED_ATTRS,
+        css_sanitizer=_CSS_SANITIZER,
+        strip=True,
+    )
+
 
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="ignore")
 
 
+@st.cache_data(ttl=300, show_spinner=False)
 def load_posts() -> List[Dict]:
     posts: List[Dict] = []
     if POSTS_DIR.exists():
@@ -48,11 +103,12 @@ def load_posts() -> List[Dict]:
             excerpt = re.sub(r"\s+", " ", content.strip())
             excerpt = excerpt[:190] + ("..." if len(excerpt) > 190 else "")
             posts.append(
-                {"title": title, "date": date_ or "", "tags": tags, "path": p, "content": content, "excerpt": excerpt}
+                {"title": title, "date": date_ or "", "tags": tags, "path": str(p), "content": content, "excerpt": excerpt}
             )
     return posts
 
 
+@st.cache_data(ttl=300, show_spinner=False)
 def load_projects() -> List[Dict]:
     json_path = ROOT / "projects.json"
     if json_path.exists():
@@ -166,7 +222,20 @@ def embed_pdf(pdf_path: Path, height: int = 860):
 
 
 def resolve_markdown_images(content: str, base_dir: Path) -> str:
-    """Resolves relative markdown image paths to base64 data URLs."""
+    """Resolves relative markdown image paths to base64 data URLs.
+
+    Security: resolved paths are jailed to ROOT so that crafted relative
+    paths like ``../../../etc/passwd`` cannot escape the project tree.
+    """
+    resolved_root = ROOT.resolve()
+
+    def _is_safe(p: Path) -> bool:
+        """Return True only if *p* lives inside the project root."""
+        try:
+            return p.resolve().is_relative_to(resolved_root)
+        except (ValueError, TypeError):
+            return False
+
     def replacer(match):
         alt_text = match.group(1)
         rel_path = match.group(2)
@@ -178,6 +247,9 @@ def resolve_markdown_images(content: str, base_dir: Path) -> str:
             full_path = (ROOT / rel_path.replace("../", "")).resolve()
         if not full_path.exists():
             full_path = (ROOT / "assets" / "img" / Path(rel_path).name).resolve()
+        # Path-jail check: never read files outside the project root
+        if not _is_safe(full_path):
+            return match.group(0)
         if full_path.exists() and full_path.suffix.lower() in (".png", ".jpg", ".jpeg", ".gif"):
             mime = f"image/{full_path.suffix.lower().lstrip('.')}"
             if mime == "image/jpg":
@@ -209,17 +281,15 @@ def parse_numeric_list(raw: str) -> List[float]:
 
 
 def card(title: str, body: str, meta: str = "", extra_html: str = ""):
-    st.markdown(
-        f"""
+    raw = f"""
         <div class="card">
           <div style="font-size: 1.35rem; font-weight: 800;">{title}</div>
           {"<div class='tiny' style='margin-top:4px;'>" + meta + "</div>" if meta else ""}
           <div class="muted" style="margin-top:10px; font-size: 1.05rem;">{body}</div>
           {extra_html}
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """
+    st.markdown(sanitize_html(raw), unsafe_allow_html=True)
 
 
 def quick_links(email: str, github_url: str, linkedin_url: str):

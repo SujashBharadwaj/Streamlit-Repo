@@ -1,10 +1,11 @@
 import streamlit as st
 from typing import Dict, List
+from utils.helpers import sanitize_html
 
 
 def render_gradient_descent_interactive():
     st.markdown("## Interactive playground (1-D, cubic only)")
-    st.markdown("<div class='muted'>Define f(x) = a3x^3 + a2x^2 + a1x + a0 and simulate gradient descent.</div>", unsafe_allow_html=True)
+    st.markdown(sanitize_html("<div class='muted'>Define f(x) = a3x^3 + a2x^2 + a1x + a0 and simulate gradient descent.</div>"), unsafe_allow_html=True)
 
     a_cols = st.columns(4)
     a3 = a_cols[0].number_input("a3", value=0.0, step=0.1, key="gd_a3")

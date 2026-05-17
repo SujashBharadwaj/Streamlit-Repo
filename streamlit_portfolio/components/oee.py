@@ -1,6 +1,7 @@
 import random
 import streamlit as st
 from typing import Dict
+from utils.helpers import sanitize_html
 
 
 def compute_oee(planned_time_sec: int, downtime_sec: int, total_count: int, good_count: int, ideal_cycle_time_sec: int) -> Dict[str, float]:
@@ -23,7 +24,7 @@ def compute_oee(planned_time_sec: int, downtime_sec: int, total_count: int, good
 def render_oee_interactive():
     st.markdown("## Interactive OEE calculation (click to run)")
     st.markdown(
-        "<div class='muted'>This demo generates a realistic shift scenario, calculates OEE, and tells you what to fix first based on the biggest loss.</div>",
+        sanitize_html("<div class='muted'>This demo generates a realistic shift scenario, calculates OEE, and tells you what to fix first based on the biggest loss.</div>"),
         unsafe_allow_html=True,
     )
 
@@ -31,7 +32,7 @@ def render_oee_interactive():
     with cA:
         seed = st.number_input("Optional seed (repeat the same example)", min_value=0, max_value=999999, value=0, step=1)
     with cB:
-        st.markdown("<div class='tiny'>Tip: set seed to 0 for fresh random outputs.</div>", unsafe_allow_html=True)
+        st.markdown(sanitize_html("<div class='tiny'>Tip: set seed to 0 for fresh random outputs.</div>"), unsafe_allow_html=True)
 
     run = st.button("Run randomized example", key="run_oee_demo")
 
@@ -49,7 +50,7 @@ def render_oee_interactive():
         )
 
     if not run:
-        st.markdown("<div class='oee-box tiny'>Click the button to generate inputs and see the output metrics + takeaway.</div>", unsafe_allow_html=True)
+        st.markdown(sanitize_html("<div class='oee-box tiny'>Click the button to generate inputs and see the output metrics + takeaway.</div>"), unsafe_allow_html=True)
         return
 
     if seed != 0:
@@ -109,6 +110,6 @@ def render_oee_interactive():
             st.info("Quality is the main limiter. Focus on defect root causes, startup stability, process parameters, and catching issues earlier in the line.")
 
     st.markdown(
-        f"<div class='tiny'>Biggest loss in this run: <b>{worst}</b> (approx. {(worst_loss*100):.1f}% loss)</div>",
+        sanitize_html(f"<div class='tiny'>Biggest loss in this run: <b>{worst}</b> (approx. {(worst_loss*100):.1f}% loss)</div>"),
         unsafe_allow_html=True,
     )

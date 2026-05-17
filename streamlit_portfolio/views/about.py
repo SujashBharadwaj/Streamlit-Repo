@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.helpers import quick_links, ASSETS
+from utils.helpers import quick_links, sanitize_html, ASSETS
 
 
 def about_view():
@@ -14,7 +14,7 @@ def about_view():
 
     with a2:
         st.markdown(
-            """
+            sanitize_html("""
             <div class="card">
               <div style="font-size: 1.5rem; font-weight: 900;">Hi, I'm Sujash.</div>
               <div class="muted" style="margin-top: 10px; font-size: 1.1rem;">
@@ -30,7 +30,7 @@ def about_view():
                 I'm an avid music listener and still log hours on Age of Empires II DE.
               </div>
             </div>
-            """,
+            """),
             unsafe_allow_html=True,
         )
 
@@ -43,12 +43,12 @@ def about_view():
     st.markdown("---")
     st.markdown("### Focus & Skills")
     st.markdown(
-        """
+        sanitize_html("""
         <div style="margin-top: 10px;">
           <span class="pill">Python</span><span class="pill">Pandas</span><span class="pill">FastAPI</span>
           <span class="pill">Scikit-learn</span><span class="pill">EDA &amp; Visualization</span>
           <span class="pill">ML Pipelines</span><span class="pill">Vector DB basics</span>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )

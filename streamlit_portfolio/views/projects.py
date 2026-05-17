@@ -1,13 +1,13 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from utils.helpers import load_projects, list_project_files, read_project_embed_html, embed_pdf, PROJECTS_DIR
+from utils.helpers import load_projects, list_project_files, read_project_embed_html, embed_pdf, sanitize_html, PROJECTS_DIR
 
 
 def projects_view():
     projects = load_projects()
 
     st.markdown("## Projects")
-    st.markdown('<div class="muted">Reports, dashboards, and interactive builds with downloadable outputs.</div>', unsafe_allow_html=True)
+    st.markdown(sanitize_html('<div class="muted">Reports, dashboards, and interactive builds with downloadable outputs.</div>'), unsafe_allow_html=True)
     st.markdown("")
 
     if not projects:
@@ -26,14 +26,14 @@ def projects_view():
         chips = "".join([f"<span class='project-chip'>{t}</span>" for t in tags[:4]])
         with grid_cols[i % 2]:
             st.markdown(
-                f"""
+                sanitize_html(f"""
                 <div class="project-card">
                   <div class="project-eyebrow">{p.get("eyebrow", "Project")}</div>
                   <div class="project-title">{p["title"]}</div>
                   <div class="muted">{p.get("desc", "")}</div>
                   <div class="project-chips">{chips}</div>
                 </div>
-                """,
+                """),
                 unsafe_allow_html=True,
             )
             if st.button("Open project", key=f"open_project_{p['slug']}", use_container_width=True):
@@ -55,14 +55,14 @@ def projects_view():
     tags = project.get("tags", [])
     chips = "".join([f"<span class='project-chip'>{t}</span>" for t in tags])
     st.markdown(
-        f"""
+        sanitize_html(f"""
         <div class="card" style="margin-top:8px;">
           <div class="project-eyebrow">{project.get("eyebrow", "Project")}</div>
           <div style="font-size:1.35rem;font-weight:800;">{project["title"]}</div>
           <div class="muted" style="margin-top:8px;">{project.get("desc", "")}</div>
           <div class="project-chips">{chips}</div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )
     st.markdown("")

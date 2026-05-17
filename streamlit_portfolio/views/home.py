@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.helpers import card, quick_links, ASSETS
+from utils.helpers import card, quick_links, sanitize_html, ASSETS
 
 
 def home_view(posts, projects):
@@ -7,7 +7,7 @@ def home_view(posts, projects):
 
     with left:
         st.markdown(
-            """
+            sanitize_html("""
             <div style="margin-top: 6px;">
               <div style="font-size: clamp(2.1rem, 4vw, 3.2rem); font-weight: 900; line-height: 1.1;">
                 Sujash Bharadwaj's Portfolio
@@ -17,7 +17,7 @@ def home_view(posts, projects):
                 I build practical projects, write what I learn, and keep things reproducible.
               </div>
             </div>
-            """,
+            """),
             unsafe_allow_html=True,
         )
 
@@ -37,7 +37,7 @@ def home_view(posts, projects):
         if latest:
             card(latest["title"], latest["excerpt"], meta=latest["date"])
             if st.button("Open article", key="open_latest"):
-                st.session_state["selected_post"] = str(latest["path"])
+                st.session_state["selected_post"] = latest["path"]
                 st.session_state["page"] = "Blog"
                 st.rerun()
         else:
@@ -55,15 +55,15 @@ def home_view(posts, projects):
 
         st.markdown("### What I'm doing now")
         st.markdown(
-            """
+            sanitize_html("""
             <span class="pill">AI &amp; ML</span>
             <span class="pill">Statistics</span>
             <span class="pill">Reproducible notebooks</span>
-            """,
+            """),
             unsafe_allow_html=True,
         )
         st.markdown(
-            '<div class="muted" style="margin-top:10px;">Hands-on mini projects, clean analysis, and short write-ups as I learn.</div>',
+            sanitize_html('<div class="muted" style="margin-top:10px;">Hands-on mini projects, clean analysis, and short write-ups as I learn.</div>'),
             unsafe_allow_html=True,
         )
 

@@ -1,6 +1,6 @@
 # Homepage.py — Entry point & router
 import streamlit as st
-from utils.helpers import load_posts, load_projects
+from utils.helpers import load_posts, load_projects, sanitize_html
 from views.home import home_view
 from views.projects import projects_view
 from views.blog import blog_view
@@ -186,7 +186,7 @@ if "selected_project" not in st.session_state:
     st.session_state["selected_project"] = ""
 
 st.sidebar.markdown("## Sujash Bharadwaj")
-st.sidebar.markdown('<div class="muted">Portfolio and personal blog</div>', unsafe_allow_html=True)
+st.sidebar.markdown(sanitize_html('<div class="muted">Portfolio and personal blog</div>'), unsafe_allow_html=True)
 st.sidebar.markdown("")
 
 current_index = PAGES.index(st.session_state["page"]) if st.session_state["page"] in PAGES else 0
