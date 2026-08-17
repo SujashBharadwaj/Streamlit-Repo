@@ -18,12 +18,12 @@ def about_view():
             <div class="card">
               <div style="font-size: 1.5rem; font-weight: 900;">Hi, I'm Sujash.</div>
               <div class="muted" style="margin-top: 10px; font-size: 1.1rem;">
-                I'm a final-year student at MIT-WPU (BSc(Hons) Applied Statistics &amp; Data Analytics) and in my diploma term
-                for IITM BS in Data Science and Applications.
+                I'm a Software Engineer at sfhawk Solutions. I graduated with a BSc(Hons) in Applied Statistics &amp; Data Analytics
+                from MIT-WPU and hold a BS in Data Science &amp; Applications from IIT Madras.
               </div>
               <div class="muted" style="margin-top: 10px; font-size: 1.1rem;">
-                I'm 22 (born 10 Jan 2004). I like machine learning, AI, math, and statistics.
-                I'm also self-studying bioinformatics and data science for biology.
+                I'm 22 (born 10 Jan 2004). I work across Computer Vision, Small &amp; Vision Language Models, .NET, Angular, and React.
+                I like machine learning, AI, math, and statistics.
               </div>
               <div class="muted" style="margin-top: 10px; font-size: 1.1rem;">
                 Outside work: F1 and cricket fan, I go karting and play cricket when I can.
@@ -45,7 +45,9 @@ def about_view():
     st.markdown(
         sanitize_html("""
         <div style="margin-top: 10px;">
-          <span class="pill">Python</span><span class="pill">Pandas</span><span class="pill">FastAPI</span>
+          <span class="pill">Python</span><span class="pill">.NET</span><span class="pill">Angular</span><span class="pill">React</span>
+          <span class="pill">Computer Vision</span><span class="pill">SLM &amp; VLM</span>
+          <span class="pill">Pandas</span><span class="pill">FastAPI</span>
           <span class="pill">Scikit-learn</span><span class="pill">EDA &amp; Visualization</span>
           <span class="pill">ML Pipelines</span><span class="pill">Vector DB basics</span>
         </div>

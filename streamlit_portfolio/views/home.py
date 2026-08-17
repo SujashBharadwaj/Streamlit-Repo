@@ -13,7 +13,7 @@ def home_view(posts, projects):
                 Sujash Bharadwaj's Portfolio
               </div>
               <div class="muted" style="margin-top: 10px; font-size: 1.25rem;">
-                Final-year BSc(Hons) Applied Statistics &amp; Data Analytics (MIT-WPU) + IITM BS (Data Science &amp; Applications).
+                Software Engineer at sfhawk Solutions. BSc(Hons) Applied Statistics &amp; Data Analytics (MIT-WPU) + IITM BS (Data Science &amp; Applications).
                 I build practical projects, write what I learn, and keep things reproducible.
               </div>
             </div>
@@ -56,14 +56,18 @@ def home_view(posts, projects):
         st.markdown("### What I'm doing now")
         st.markdown(
             sanitize_html("""
+            <span class="pill">Computer Vision</span>
+            <span class="pill">SLM &amp; VLM</span>
             <span class="pill">AI &amp; ML</span>
+            <span class="pill">.NET &amp; Angular</span>
+            <span class="pill">React</span>
             <span class="pill">Statistics</span>
             <span class="pill">Reproducible notebooks</span>
             """),
             unsafe_allow_html=True,
         )
         st.markdown(
-            sanitize_html('<div class="muted" style="margin-top:10px;">Hands-on mini projects, clean analysis, and short write-ups as I learn.</div>'),
+            sanitize_html('<div class="muted" style="margin-top:10px;">Building production systems, exploring vision &amp; language models, and writing about what I learn along the way.</div>'),
             unsafe_allow_html=True,
         )
 

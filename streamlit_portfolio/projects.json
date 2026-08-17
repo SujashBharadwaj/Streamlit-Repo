@@ -16,13 +16,13 @@
     "tags": ["Kaggle", "XGBoost", "NLP", "Classification", "Regression", "Feature Engineering"],
     "type": "external",
     "links": [
-      {"label": "KA1 — Flight Price Prediction", "url": "https://www.kaggle.com/code/sujashbharadwaj/23f1000914-kaggle-assignment-1"},
-      {"label": "KA2 — Customer Churn", "url": "https://www.kaggle.com/code/sujashbharadwaj/kaggle-assignment-2"},
-      {"label": "KA3 — Review Rating Prediction", "url": "https://www.kaggle.com/code/sujashbharadwaj/kaggle-assignment-3"},
-      {"label": "Cinema Audience Forecasting", "url": "https://www.kaggle.com/code/sujashbharadwaj/23f1000914-notebook-t32025"},
-      {"label": "T3 KA1", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-kaggle-assignment-1-ka1"},
-      {"label": "T3 KA2", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-2025-kaggle-assignment-2"},
-      {"label": "T3 KA3", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-2025-kaggle-assignment-3"}
+      {"label": "KA1 — Flight Price Prediction", "desc": "Regression on flight ticket data using XGBoost with feature engineering on routes, stops, and departure time.", "url": "https://www.kaggle.com/code/sujashbharadwaj/23f1000914-kaggle-assignment-1"},
+      {"label": "KA2 — Customer Churn", "desc": "Binary classification predicting bank customer exit using gradient boosting and class-imbalance handling.", "url": "https://www.kaggle.com/code/sujashbharadwaj/kaggle-assignment-2"},
+      {"label": "KA3 — Review Rating Prediction", "desc": "NLP pipeline predicting eatery ratings from customer reviews using TF-IDF and ensemble models.", "url": "https://www.kaggle.com/code/sujashbharadwaj/kaggle-assignment-3"},
+      {"label": "Cinema Audience Forecasting", "desc": "Time-series forecasting of cinema footfall using lag features, rolling statistics, and LightGBM.", "url": "https://www.kaggle.com/code/sujashbharadwaj/23f1000914-notebook-t32025"},
+      {"label": "T3 KA1", "desc": "Term 3 competition — structured data classification with hyperparameter-tuned tree ensembles.", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-kaggle-assignment-1-ka1"},
+      {"label": "T3 KA2", "desc": "Term 3 competition — multi-class prediction with stacked generalization and feature selection.", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-2025-kaggle-assignment-2"},
+      {"label": "T3 KA3", "desc": "Term 3 competition — regression task with advanced feature engineering and cross-validation.", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-2025-kaggle-assignment-3"}
     ]
   },
   {
@@ -33,7 +33,7 @@
     "tags": ["RAG", "LLM", "Vector DB", "Agentic AI", "Python"],
     "type": "external",
     "links": [
-      {"label": "GitHub Repository", "url": "https://github.com/SujashBharadwaj/mca-agent"}
+      {"label": "GitHub Repository", "desc": "Ingests documents into a vector store, retrieves relevant chunks, and generates LLM answers with source citations.", "url": "https://github.com/SujashBharadwaj/mca-agent"}
     ]
   },
   {

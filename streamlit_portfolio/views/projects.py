@@ -90,12 +90,24 @@ def _render_external(project):
         return
 
     st.markdown("#### External Links")
-    # Render links in a 2-column grid for visual balance
+    # Render links in a 2-column grid with descriptions
     link_cols = st.columns(2, gap="medium")
     for i, link in enumerate(links):
         with link_cols[i % 2]:
+            desc_html = ""
+            if link.get("desc"):
+                desc_html = f'<div class="muted" style="font-size:.92rem; margin-top:4px;">{link["desc"]}</div>'
+            st.markdown(
+                sanitize_html(f"""
+                <div class="card" style="min-height:90px; padding:14px 16px;">
+                  <div style="font-size:1.05rem; font-weight:700;">{link['label']}</div>
+                  {desc_html}
+                </div>
+                """),
+                unsafe_allow_html=True,
+            )
             st.link_button(
-                f"🔗 {link['label']}",
+                f"\U0001f517 Open",
                 link["url"],
                 use_container_width=True,
             )
