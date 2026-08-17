@@ -10,7 +10,7 @@ from views.about import about_view
 # ---------------------------
 # Config
 # ---------------------------
-_favicon = Image.open("streamlit_portfolio/assets/css/favicon.jfif")
+_favicon = Image.open("streamlit_portfolio/assets/css/favicon.png")
 st.set_page_config(
     page_title="Sujash Bharadwaj | Software & ML Engineer",
     page_icon=_favicon,
