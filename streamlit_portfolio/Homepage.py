@@ -1,5 +1,6 @@
 # Homepage.py — Entry point & router
 import streamlit as st
+from PIL import Image
 from utils.helpers import load_posts, load_projects, sanitize_html
 from views.home import home_view
 from views.projects import projects_view
@@ -9,8 +10,10 @@ from views.about import about_view
 # ---------------------------
 # Config
 # ---------------------------
+_favicon = Image.open("streamlit_portfolio/assets/css/favicon.jfif")
 st.set_page_config(
-    page_title="Sujash Bharadwaj's Portfolio",
+    page_title="Sujash Bharadwaj | Software & ML Engineer",
+    page_icon=_favicon,
     layout="wide",
 )
 
@@ -43,7 +46,7 @@ st.markdown(
       h1, h2, h3, h4, h5, h6,
       .stRadio label, .stButton button, .stDownloadButton button,
       [data-testid="stSidebar"] * {
-        font-family: 'Oswald', sans-serif !important;
+        font-family: 'Copperplate Gothic', 'Copperplate', 'Oswald', sans-serif !important;
         letter-spacing: 0.2px;
       }
 
@@ -187,6 +190,10 @@ if "selected_project" not in st.session_state:
 
 st.sidebar.markdown("## Sujash Bharadwaj")
 st.sidebar.markdown(sanitize_html('<div class="muted">Portfolio and personal blog</div>'), unsafe_allow_html=True)
+st.sidebar.markdown(
+    sanitize_html('<div style="margin-top:6px;"><span style="display:inline-block; padding:2px 10px; border-radius:999px; border:1px solid rgba(16,185,129,.35); background:rgba(16,185,129,.10); font-size:0.82rem; color:#34D399; letter-spacing:0.04em;">v2.0.0</span></div>'),
+    unsafe_allow_html=True,
+)
 st.sidebar.markdown("")
 
 current_index = PAGES.index(st.session_state["page"]) if st.session_state["page"] in PAGES else 0

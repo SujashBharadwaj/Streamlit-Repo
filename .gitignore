@@ -1,0 +1,59 @@
+# ========================
+# Python
+# ========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ========================
+# Virtual Environments
+# ========================
+.venv/
+venv/
+env/
+ENV/
+
+# ========================
+# Secrets & Credentials
+# ========================
+.env
+.env.local
+.env.*.local
+kaggle.json
+*.pem
+*.key
+
+# ========================
+# IDE & Editor
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ========================
+# OS Files
+# ========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ========================
+# Testing & Cache
+# ========================
+.pytest_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# ========================
+# Streamlit
+# ========================
+# Keep .streamlit/config.toml tracked (theme config)
+# but ignore secrets
+.streamlit/secrets.toml

@@ -9,6 +9,45 @@
     "html_file": "index.html"
   },
   {
+    "slug": "kaggle-ml-competitions",
+    "title": "Kaggle ML Competitions Suite",
+    "desc": "6 Kaggle competition submissions across two MLP course terms — covering flight price prediction, customer churn classification, restaurant review rating prediction, cinema audience forecasting, and more. Techniques include gradient boosting (XGBoost/LightGBM), feature engineering, NLP pipelines, and ensemble methods.",
+    "eyebrow": "Machine Learning · Kaggle",
+    "tags": ["Kaggle", "XGBoost", "NLP", "Classification", "Regression", "Feature Engineering"],
+    "type": "external",
+    "links": [
+      {"label": "KA1 — Flight Price Prediction", "url": "https://www.kaggle.com/code/sujashbharadwaj/23f1000914-kaggle-assignment-1"},
+      {"label": "KA2 — Customer Churn", "url": "https://www.kaggle.com/code/sujashbharadwaj/kaggle-assignment-2"},
+      {"label": "KA3 — Review Rating Prediction", "url": "https://www.kaggle.com/code/sujashbharadwaj/kaggle-assignment-3"},
+      {"label": "Cinema Audience Forecasting", "url": "https://www.kaggle.com/code/sujashbharadwaj/23f1000914-notebook-t32025"},
+      {"label": "T3 KA1", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-kaggle-assignment-1-ka1"},
+      {"label": "T3 KA2", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-2025-kaggle-assignment-2"},
+      {"label": "T3 KA3", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-2025-kaggle-assignment-3"}
+    ]
+  },
+  {
+    "slug": "mca-agent",
+    "title": "MCA Agent — Agentic AI RAG",
+    "desc": "An experimental Retrieval-Augmented Generation (RAG) agent built to explore agentic AI patterns — document ingestion, vector search, and LLM-powered Q&A. Work-in-progress.",
+    "eyebrow": "Agentic AI · Experimental",
+    "tags": ["RAG", "LLM", "Vector DB", "Agentic AI", "Python"],
+    "type": "external",
+    "links": [
+      {"label": "GitHub Repository", "url": "https://github.com/SujashBharadwaj/mca-agent"}
+    ]
+  },
+  {
+    "slug": "trekking-management-mad1",
+    "title": "Trekking Management App (MAD-1)",
+    "desc": "Full-stack web application for managing trekking expeditions — user registration, trek booking, admin dashboard, and SQLite-backed data persistence. Built as part of IITM Modern Application Development coursework.",
+    "eyebrow": "Full-Stack · Flask",
+    "tags": ["Flask", "SQLite", "Jinja2", "Bootstrap", "REST API", "IITM"],
+    "type": "external",
+    "links": [
+      {"label": "GitHub Repository", "url": "https://github.com/SujashBharadwaj/TrekkingManagementAppMAD1PROJECT"}
+    ]
+  },
+  {
     "slug": "EnergyEquitiesMI",
     "title": "Energy Equities MI Reporting",
     "desc": "Dataset generation, exception monitoring, and MI-style reporting for 10 NSE energy companies.",

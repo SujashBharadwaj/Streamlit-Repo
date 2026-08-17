@@ -76,8 +76,29 @@ def projects_view():
         _render_embed(project)
     elif ptype == "multi_report":
         _render_multi_report(project)
+    elif ptype == "external":
+        _render_external(project)
     else:
         _render_report(project)
+
+
+def _render_external(project):
+    """Render projects hosted on external platforms (Kaggle, GitHub, etc.)."""
+    links = project.get("links", [])
+    if not links:
+        st.info("No external links configured for this project.")
+        return
+
+    st.markdown("#### External Links")
+    # Render links in a 2-column grid for visual balance
+    link_cols = st.columns(2, gap="medium")
+    for i, link in enumerate(links):
+        with link_cols[i % 2]:
+            st.link_button(
+                f"🔗 {link['label']}",
+                link["url"],
+                use_container_width=True,
+            )
 
 
 def _render_game(project):
