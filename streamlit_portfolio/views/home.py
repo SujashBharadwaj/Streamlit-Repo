@@ -38,6 +38,7 @@ def home_view(posts, projects):
             card(latest["title"], latest["excerpt"], meta=latest["date"])
             if st.button("Open article", key="open_latest"):
                 st.session_state["selected_post"] = latest["path"]
+                st.session_state["blog_detail_open"] = True
                 st.session_state["page"] = "Blog"
                 st.rerun()
         else:
@@ -48,6 +49,7 @@ def home_view(posts, projects):
             card(projects[0]["title"], projects[0]["desc"])
             if st.button("Open project", key="open_latest_project"):
                 st.session_state["selected_project"] = projects[0]["slug"]
+                st.session_state["project_detail_open"] = True
                 st.session_state["page"] = "Projects"
                 st.rerun()
         else:

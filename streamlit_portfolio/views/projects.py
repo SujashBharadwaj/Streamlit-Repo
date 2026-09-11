@@ -6,19 +6,33 @@ from utils.helpers import load_projects, list_project_files, read_project_embed_
 def projects_view():
     projects = load_projects()
 
-    st.markdown("## Projects")
-    st.markdown(sanitize_html('<div class="muted">Reports, dashboards, and interactive builds with downloadable outputs.</div>'), unsafe_allow_html=True)
-    st.markdown("")
-
     if not projects:
         st.info("No projects found.")
         return
 
     slugs = [p["slug"] for p in projects]
+
+    # Initialise session keys
     if st.session_state.get("selected_project") not in slugs:
         st.session_state["selected_project"] = projects[0]["slug"]
+    if "project_detail_open" not in st.session_state:
+        st.session_state["project_detail_open"] = False
 
-    # --- Project grid ---
+    # ---- Route: Detail view or Gallery ----
+    if st.session_state["project_detail_open"]:
+        _detail_view(projects)
+    else:
+        _gallery_view(projects)
+
+
+# =====================================================================
+# Gallery view — card grid only, no detail content
+# =====================================================================
+def _gallery_view(projects):
+    st.markdown("## Projects")
+    st.markdown(sanitize_html('<div class="muted">Reports, dashboards, and interactive builds with downloadable outputs.</div>'), unsafe_allow_html=True)
+    st.markdown("")
+
     st.markdown("### Featured")
     grid_cols = st.columns(2, gap="medium")
     for i, p in enumerate(projects):
@@ -38,20 +52,40 @@ def projects_view():
             )
             if st.button("Open project", key=f"open_project_{p['slug']}", use_container_width=True):
                 st.session_state["selected_project"] = p["slug"]
+                st.session_state["project_detail_open"] = True
                 st.rerun()
 
-    # --- Detail view ---
+
+# =====================================================================
+# Detail view — dedicated page for a single project
+# =====================================================================
+def _detail_view(projects):
+    slug = st.session_state["selected_project"]
+    project = next((p for p in projects if p["slug"] == slug), projects[0])
+
+    # ---- Top navigation bar ----
     st.markdown("")
-    titles = [p["title"] for p in projects]
-    slug_by_title = {p["title"]: p["slug"] for p in projects}
-    selected_title = next(p["title"] for p in projects if p["slug"] == st.session_state["selected_project"])
-    selected_title = st.selectbox("Quick jump", titles, index=titles.index(selected_title), key="project_selectbox")
+    nav_left, nav_right = st.columns([1, 2], gap="small")
+    with nav_left:
+        if st.button("← Back to all projects", key="back_to_gallery", use_container_width=True):
+            st.session_state["project_detail_open"] = False
+            st.rerun()
+    with nav_right:
+        titles = [p["title"] for p in projects]
+        slug_by_title = {p["title"]: p["slug"] for p in projects}
+        selected_title = project["title"]
+        new_title = st.selectbox(
+            "Quick jump",
+            titles,
+            index=titles.index(selected_title),
+            key="project_detail_selectbox",
+            label_visibility="collapsed",
+        )
+        if slug_by_title[new_title] != slug:
+            st.session_state["selected_project"] = slug_by_title[new_title]
+            st.rerun()
 
-    slug = slug_by_title[selected_title]
-    st.session_state["selected_project"] = slug
-    project = next(p for p in projects if p["slug"] == slug)
-
-    # Detail card
+    # ---- Detail header card ----
     tags = project.get("tags", [])
     chips = "".join([f"<span class='project-chip'>{t}</span>" for t in tags])
     st.markdown(
@@ -67,9 +101,9 @@ def projects_view():
     )
     st.markdown("")
 
+    # ---- Render project payload by type ----
     ptype = project.get("type", "report")
 
-    # --- Type: game ---
     if ptype == "game":
         _render_game(project)
     elif ptype == "embed":
@@ -83,6 +117,26 @@ def projects_view():
     else:
         _render_report(project)
 
+    # ---- Bottom prev / next navigation ----
+    st.markdown("---")
+    slugs = [p["slug"] for p in projects]
+    idx = slugs.index(slug)
+    prev_col, _, next_col = st.columns([1, 2, 1])
+    if idx > 0:
+        with prev_col:
+            if st.button(f"← {projects[idx - 1]['title']}", key="prev_project", use_container_width=True):
+                st.session_state["selected_project"] = slugs[idx - 1]
+                st.rerun()
+    if idx < len(slugs) - 1:
+        with next_col:
+            if st.button(f"{projects[idx + 1]['title']} →", key="next_project", use_container_width=True):
+                st.session_state["selected_project"] = slugs[idx + 1]
+                st.rerun()
+
+
+# =====================================================================
+# Type-specific renderers (unchanged logic, extracted from old file)
+# =====================================================================
 
 def _render_live_app(project):
     """Render live embedded web applications with iframe, quick actions, and test credentials."""

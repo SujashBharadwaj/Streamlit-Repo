@@ -10,6 +10,11 @@ All notable changes to this project will be documented in this file.
 - **Live App Embed Support**: Added native `live_app` project renderer in `views/projects.py` with embedded iframe (`components.iframe`), full-screen launch, repository links, and styled demo credentials display.
 - **MAD-1 Trekking Management App**: Updated project metadata with live Render hosted link (`https://mad-1-project-g7e0.onrender.com/`), IIT Madras MAD-1 course context, and default role-based test credentials (Admin, Staff, Trekker).
 
+### Changed
+- **Projects page — Gallery / Detail split**: Clicking "Open project" now transports the user to a dedicated detail page with `← Back to all projects` button, quick-jump dropdown, and prev/next navigation. The card grid is no longer stacked above the detail content.
+- **Blog page — Index / Reader split**: Clicking "Read article →" now transports the user to a dedicated reader page with `← Back to all posts` button, quick-jump dropdown, and prev/next navigation.
+- **Home page direct-jumps**: "Open project" and "Open article" shortcuts on the Home page now land directly in the detail/reader views.
+
 ---
 
 ## [v2.1.0] — 2026-08-18
