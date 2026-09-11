@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v2.2.0] — 2026-09-11
+
+### Added
+- **Live App Embed Support**: Added native `live_app` project renderer in `views/projects.py` with embedded iframe (`components.iframe`), full-screen launch, repository links, and styled demo credentials display.
+- **MAD-1 Trekking Management App**: Updated project metadata with live Render hosted link (`https://mad-1-project-g7e0.onrender.com/`), IIT Madras MAD-1 course context, and default role-based test credentials (Admin, Staff, Trekker).
+
+---
+
 ## [v2.1.0] — 2026-08-18
 
 ### Changed

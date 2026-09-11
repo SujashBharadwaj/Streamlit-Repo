@@ -39,12 +39,16 @@
   {
     "slug": "trekking-management-mad1",
     "title": "Trekking Management App (MAD-1)",
-    "desc": "Full-stack web application for managing trekking expeditions — user registration, trek booking, admin dashboard, and SQLite-backed data persistence. Built as part of IITM Modern Application Development coursework.",
-    "eyebrow": "Full-Stack · Flask",
-    "tags": ["Flask", "SQLite", "Jinja2", "Bootstrap", "REST API", "IITM"],
-    "type": "external",
-    "links": [
-      {"label": "GitHub Repository", "url": "https://github.com/SujashBharadwaj/TrekkingManagementAppMAD1PROJECT"}
+    "desc": "Full-stack web application for managing trekking expeditions — staff payouts, expense tracking, expedition bookings, debrief reports, and SQLite-backed data persistence. Built and evaluated under strict architecture standards for IIT Madras MAD-1 course.",
+    "eyebrow": "Full-Stack · Flask Live App",
+    "tags": ["Python", "Flask", "SQLAlchemy", "SQLite", "Jinja2", "HTML5/CSS3", "IIT Madras"],
+    "type": "live_app",
+    "live_url": "https://mad-1-project-g7e0.onrender.com/",
+    "github_url": "https://github.com/SujashBharadwaj/TrekkingManagementAppMAD1PROJECT",
+    "credentials": [
+      {"role": "Admin", "username": "admin", "password": "admin123"},
+      {"role": "Staff", "username": "staff1 or staff2", "password": "staff123"},
+      {"role": "Trekker", "username": "user1", "password": "user123"}
     ]
   },
   {

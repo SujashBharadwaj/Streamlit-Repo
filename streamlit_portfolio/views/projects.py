@@ -76,10 +76,47 @@ def projects_view():
         _render_embed(project)
     elif ptype == "multi_report":
         _render_multi_report(project)
+    elif ptype == "live_app":
+        _render_live_app(project)
     elif ptype == "external":
         _render_external(project)
     else:
         _render_report(project)
+
+
+def _render_live_app(project):
+    """Render live embedded web applications with iframe, quick actions, and test credentials."""
+    live_url = project.get("live_url", "")
+    github_url = project.get("github_url", "")
+    credentials = project.get("credentials", [])
+
+    # Action buttons and Demo credentials section
+    col1, col2 = st.columns([1, 1], gap="medium")
+    with col1:
+        if live_url:
+            st.link_button("🚀 Launch Full App", live_url, use_container_width=True)
+    with col2:
+        if github_url:
+            st.link_button("💻 GitHub Repo", github_url, use_container_width=True)
+
+    if credentials:
+        cred_items = " &nbsp;|&nbsp; ".join(
+            [f"<strong>{c['role']}:</strong> <code>{c['username']}</code> / <code>{c['password']}</code>" for c in credentials]
+        )
+        st.markdown(
+            sanitize_html(f"""
+            <div class="card" style="padding:10px 16px; margin: 12px 0 16px 0; border-left: 3px solid #10B981; font-size:0.95rem;">
+              <span style="color:#34D399; font-weight:700;">Default Demo Credentials:</span> {cred_items}
+            </div>
+            """),
+            unsafe_allow_html=True,
+        )
+
+    if live_url:
+        st.markdown("#### Live Interactive App")
+        components.iframe(src=live_url, height=800, scrolling=True)
+    else:
+        st.info("Live app URL not configured.")
 
 
 def _render_external(project):
