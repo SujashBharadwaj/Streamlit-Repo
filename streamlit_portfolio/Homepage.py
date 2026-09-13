@@ -10,7 +10,8 @@ from views.about import about_view
 # ---------------------------
 # Config
 # ---------------------------
-_favicon = Image.open("streamlit_portfolio/assets/css/favicon.png")
+from pathlib import Path as _Path
+_favicon = Image.open(_Path(__file__).parent / "assets" / "css" / "favicon.png")
 st.set_page_config(
     page_title="Sujash Bharadwaj | Software & ML Engineer",
     page_icon=_favicon,

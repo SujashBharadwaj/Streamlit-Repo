@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 from utils.helpers import load_projects, list_project_files, read_project_embed_html, embed_pdf, sanitize_html, PROJECTS_DIR
+from components.db_study_preview import render_db_study_preview
 
 
 def projects_view():
@@ -114,6 +115,8 @@ def _detail_view(projects):
         _render_live_app(project)
     elif ptype == "external":
         _render_external(project)
+    elif ptype == "db_study":
+        render_db_study_preview(project)
     else:
         _render_report(project)
 

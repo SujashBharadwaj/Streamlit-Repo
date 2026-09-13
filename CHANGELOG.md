@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v2.3.0] — 2026-09-13
+
+### Added
+- **DatabaseStudy — Open Source Project**: Chaos-simulated enterprise ERP database generator (`DatabaseStudy/`). 28 interconnected tables across 6 modules (Finance, Sales, Procurement, Inventory, Logistics, HR) with fully randomized dirty data, JSON payloads, mixed date formats, orphan FKs, and ledger drift. Non-deterministic by design.
+- **Challenge Suite**: 4 role-specific SQL & analytics challenge sets targeting Data Analysts, Data Scientists, Analytics Engineers, and DBAs (`DatabaseStudy/challenges/`).
+- **Portfolio Integration**: New `db_study` project type in `projects.json` with `head(5)` dirty data previews, schema overview cards, tabbed challenge viewer, and GitHub links (`components/db_study_preview.py`).
+
+---
+
 ## [v2.2.0] — 2026-09-11
 
 ### Added

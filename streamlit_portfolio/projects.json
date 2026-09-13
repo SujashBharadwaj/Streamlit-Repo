@@ -83,5 +83,16 @@
       {"name": "final.pdf", "label": "Final"},
       {"name": "presentation.pdf", "label": "Presentation"}
     ]
+  },
+  {
+    "slug": "database-study",
+    "title": "DatabaseStudy — Chaos ERP Database",
+    "desc": "Open-source chaos-simulated enterprise ERP database generator. 28 interconnected tables spanning Finance, Sales, Procurement, Inventory, Logistics, and HR — loaded with dirty nulls, embedded JSON payloads, mixed date formats, orphan foreign keys, and ledger imbalances. Fully randomized on every run.",
+    "eyebrow": "Open Source · Database & Analytics Engineering",
+    "tags": ["Python", "SQLite", "Open Source", "Data Engineering", "ERP", "SQL Challenges"],
+    "type": "db_study",
+    "github_url": "https://github.com/SujashBharadwaj/DatabaseStudy",
+    "sample_tables": ["invoices", "sales_orders", "gl_journal_lines", "customers", "employees"]
   }
 ]
+
