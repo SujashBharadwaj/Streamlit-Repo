@@ -129,38 +129,45 @@ def _reader_view(posts):
     content = normalize_math(post["content"])
     content = resolve_markdown_images(content, post_path_obj.parent)
 
+    # Strip redundant leading H1 if it mirrors post['title']
+    content_lines = content.lstrip().splitlines()
+    if content_lines and content_lines[0].startswith("# "):
+        h1_text = content_lines[0].lstrip("# ").strip().lower()
+        if h1_text == post["title"].strip().lower():
+            content = "\n".join(content_lines[1:]).lstrip()
+
     slug = re.sub(r"^\d{4}-\d{2}-\d{2}-", "", post_path_obj.stem.lower())
     is_means_post = slug == "means-guide"
     is_gd_post = slug == "gradient-descent"
 
     if is_oee_post and OEE_MARKER in content:
         before, after = content.split(OEE_MARKER, 1)
-        st.markdown(sanitize_html(before), unsafe_allow_html=True)
+        st.markdown(before, unsafe_allow_html=True)
         st.markdown("---")
         render_oee_interactive()
         after_clean = re.sub(r"^\s*```python[\s\S]*?```\s*", "", after, count=1).lstrip()
         st.markdown("---")
-        st.markdown(sanitize_html(after_clean), unsafe_allow_html=True)
+        st.markdown(after_clean, unsafe_allow_html=True)
     elif is_means_post and "## Interactive playground" in content:
         before, after = content.split("## Interactive playground", 1)
-        st.markdown(sanitize_html(before), unsafe_allow_html=True)
+        st.markdown(before, unsafe_allow_html=True)
         st.markdown("---")
         render_means_interactive()
         if "## Takeaways" in after:
             _, tail = after.split("## Takeaways", 1)
             st.markdown("---")
-            st.markdown(sanitize_html("## Takeaways" + tail), unsafe_allow_html=True)
+            st.markdown("## Takeaways" + tail, unsafe_allow_html=True)
     elif is_gd_post and "## Interactive playground (1-D, cubic only)" in content:
         before, after = content.split("## Interactive playground (1-D, cubic only)", 1)
-        st.markdown(sanitize_html(before), unsafe_allow_html=True)
+        st.markdown(before, unsafe_allow_html=True)
         st.markdown("---")
         render_gradient_descent_interactive()
         if "## Usage in machine learning" in after:
             _, tail = after.split("## Usage in machine learning", 1)
             st.markdown("---")
-            st.markdown(sanitize_html("## Usage in machine learning" + tail), unsafe_allow_html=True)
+            st.markdown("## Usage in machine learning" + tail, unsafe_allow_html=True)
     else:
-        st.markdown(sanitize_html(content), unsafe_allow_html=True)
+        st.markdown(content, unsafe_allow_html=True)
 
     # ---- Bottom prev / next navigation ----
     st.markdown("---")

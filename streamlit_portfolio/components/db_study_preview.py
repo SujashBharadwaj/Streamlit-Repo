@@ -107,26 +107,25 @@ def render_db_study_preview(project):
 
     if DB_PATH.exists():
         try:
-            conn = sqlite3.connect(str(DB_PATH))
-            for table_name in sample_tables:
-                try:
-                    df = pd.read_sql(f"SELECT * FROM [{table_name}] LIMIT 5", conn)
-                    row_count = pd.read_sql(f"SELECT COUNT(*) as cnt FROM [{table_name}]", conn)["cnt"][0]
-                    st.markdown(
-                        sanitize_html(f"""
-                        <div style="margin-top:16px; margin-bottom:4px;">
-                          <span style="font-weight:700; font-size:1rem;">{table_name}</span>
-                          <span style="color:#6B7280; font-size:0.85rem;"> — {row_count:,} rows</span>
-                        </div>
-                        """),
-                        unsafe_allow_html=True,
-                    )
-                    st.dataframe(df, use_container_width=True, hide_index=True)
-                except Exception:
-                    st.caption(f"Could not load `{table_name}`.")
-            conn.close()
+            with sqlite3.connect(str(DB_PATH)) as conn:
+                for table_name in sample_tables:
+                    try:
+                        df = pd.read_sql(f"SELECT * FROM [{table_name}] LIMIT 5", conn)
+                        row_count = pd.read_sql(f"SELECT COUNT(*) as cnt FROM [{table_name}]", conn)["cnt"][0]
+                        st.markdown(
+                            sanitize_html(f"""
+                            <div style="margin-top:16px; margin-bottom:4px;">
+                              <span style="font-weight:700; font-size:1rem;">{table_name}</span>
+                              <span style="color:#6B7280; font-size:0.85rem;"> — {row_count:,} rows</span>
+                            </div>
+                            """),
+                            unsafe_allow_html=True,
+                        )
+                        st.dataframe(df, use_container_width=True, hide_index=True)
+                    except Exception:
+                        st.caption(f"Could not load `{table_name}`.")
         except Exception:
-            st.info("Sample database not found. Run `python generator.py` in the DatabaseStudy folder to generate one.")
+            st.info("Sample database could not be loaded. Run `python generator.py` in the DatabaseStudy folder to generate one.")
     else:
         st.info(
             "No sample database available for preview. "

@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v2.3.5] — 2026-09-18
+
+### Added
+- **Blog Post**: "Beyond the Monolith — Deconstructing SLMs, VLMs, VLAs, World Models, and the Post-LLM Frontier" (`posts/2026-09-18-modern-ai-taxonomy.md`). Comprehensive technical survey of the post-scaling landscape covering Small Language Models (0.5B–8B edge efficiency), Vision-Language Models (dynamic patchification & grounding), Vision-Language-Action Models & LAMs (embodied robotics & GUI control), World Models (spatial simulation & predictive physics), JEPAs & Large Concept Models (latent-space non-autoregressive reasoning), complete with an architectural comparison matrix.
+
+### Fixed
+- **Blog Code Block & Backtick Corruption**: In `views/blog.py`, markdown was previously being passed through `bleach.clean()`, which stripped backticks and severely corrupted fenced code blocks (````python) and inline code tags into plain text. Fixed by rendering markdown cleanly through `st.markdown(content, unsafe_allow_html=True)` while preserving math normalization and image resolution.
+- **Blog Reader Duplicate Heading**: Fixed duplicate title rendering where posts with leading `# Title` rendered both the Streamlit `### Title` component and the markdown `# Title` line. Redundant leading headings that match post metadata are now cleanly stripped.
+- **DatabaseStudy SQLite Connection Safety**: In `components/db_study_preview.py`, refactored database queries to use a context manager (`with sqlite3.connect(...) as conn:`) ensuring connections are safely closed even if sample table queries encounter exceptions.
+- **Version Badge Update**: Updated sidebar version badge to `v2.3.5` in `Homepage.py`.
+
+---
+
 ## [v2.3.0] — 2026-09-13
 
 ### Added
