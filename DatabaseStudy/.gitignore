@@ -3,6 +3,16 @@
 *.duckdb
 csv_export/
 
+# FFmpeg binaries & build (local only, not committed)
+ffmpeg.exe
+ffprobe.exe
+ffmpeg.zip
+ffmpeg-*-essentials_build/
+
+# Promo video generation (scratch scripts & assets)
+generate_promo_video.py
+temp_assets/
+
 # Python
 __pycache__/
 *.pyc
