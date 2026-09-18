@@ -192,7 +192,7 @@ if "selected_project" not in st.session_state:
 st.sidebar.markdown("## Sujash Bharadwaj")
 st.sidebar.markdown(sanitize_html('<div class="muted">Portfolio and personal blog</div>'), unsafe_allow_html=True)
 st.sidebar.markdown(
-    sanitize_html('<div style="margin-top:6px;"><span style="display:inline-block; padding:2px 10px; border-radius:999px; border:1px solid rgba(16,185,129,.35); background:rgba(16,185,129,.10); font-size:0.82rem; color:#34D399; letter-spacing:0.04em;">v2.3.5</span></div>'),
+    sanitize_html('<div style="margin-top:6px;"><span style="display:inline-block; padding:2px 10px; border-radius:999px; border:1px solid rgba(16,185,129,.35); background:rgba(16,185,129,.10); font-size:0.82rem; color:#34D399; letter-spacing:0.04em;">v2.4.0</span></div>'),
     unsafe_allow_html=True,
 )
 st.sidebar.markdown("")

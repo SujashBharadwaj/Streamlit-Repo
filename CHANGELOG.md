@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v2.4.0] — 2026-09-18
+
+### Added
+- **Faulty Scientific Calculator**: Satirical, maliciously compliant simulation of the infamous GATE / TCS iON on-screen exam calculator (`projects_static/faulty-scientific-calc/index.html`). Features authentic TCS iON styling, broken mouse click resistance (simulating dust under test center rubber membranes), keypad musical chairs (button reshuffle), multilingual script roulette (Devanagari and Roman numerals, literal Hindi translations), over-engineered mathematical outcomes (`1 + 1` -> `sin(90°) + cos(0°)`), synthesized Web Audio click sounds, and a proctor surveillance paranoia simulator.
+- **Portfolio Showcase**: Integrated Faulty Scientific Calculator into `projects.json` with dedicated in-app iframe rendering, HTML download, and backstory writeup.
+- **Homepage Showcase**: Elevated Faulty Scientific Calculator as the featured latest project and the Modern AI Taxonomy article as the featured latest article on the portfolio homepage.
+- **Version Bump**: Bumped project release to `v2.4.0`.
+
 ---
 
 ## [v2.3.5] — 2026-09-18

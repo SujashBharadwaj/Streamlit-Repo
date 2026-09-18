@@ -1,5 +1,14 @@
 [
   {
+    "slug": "faulty-scientific-calc",
+    "title": "Faulty Scientific Calculator",
+    "desc": "A satirical, maliciously compliant simulation of the infamous GATE / TCS iON on-screen exam calculator with broken mouse click resistance, keypad musical chairs, multilingual script roulette, and absurd calculus outputs.",
+    "eyebrow": "Satirical Engineering · Web App",
+    "tags": ["HTML5/JS", "Web Audio API", "UX Satire", "GATE Exam Trauma", "Streamlit Embed"],
+    "type": "game",
+    "html_file": "index.html"
+  },
+  {
     "slug": "wall-jump-maze",
     "title": "Wall Jump Maze Runner",
     "desc": "Pac-Man-inspired interactive portfolio mini game built in Canvas, with pellet collection, ghost collision, and a timed wall-jump ability.",

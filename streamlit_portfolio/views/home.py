@@ -61,6 +61,7 @@ def home_view(posts, projects):
             <span class="pill">Computer Vision</span>
             <span class="pill">SLM &amp; VLM</span>
             <span class="pill">AI &amp; ML</span>
+            <span class="pill">Creative Web Apps</span>
             <span class="pill">.NET &amp; Angular</span>
             <span class="pill">React</span>
             <span class="pill">Statistics</span>

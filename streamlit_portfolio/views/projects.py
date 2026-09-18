@@ -212,36 +212,52 @@ def _render_game(project):
     html_file = project.get("html_file", "index.html")
     html = read_project_embed_html(slug, html_file)
     if html:
-        st.markdown("#### Play the game")
-        components.html(html, height=750, scrolling=False)
+        st.markdown(f"#### Interactive Simulation")
+        frame_height = 800 if slug == "faulty-scientific-calc" else 750
+        components.html(html, height=frame_height, scrolling=True)
 
         html_path = PROJECTS_DIR / slug / html_file
         st.download_button(
-            label="Download game HTML",
+            label=f"Download {project['title']} HTML",
             data=html_path.read_bytes(),
             file_name=html_file,
             mime="text/html",
             use_container_width=True,
         )
     else:
-        st.info("Game file not found.")
+        st.info("Interactive project file not found.")
 
     st.markdown("")
     st.markdown("### Why I Built This")
-    st.markdown(
-        """
-        I wanted to add more interactive displays to my portfolio, and a Pac-Man-inspired mini game felt like a strong way to do it.
-        The goal was to challenge myself to build a clean browser game using only HTML, CSS, JavaScript, and the Canvas API,
-        then embed it inside Streamlit with `st.components.v1.html()`.
+    if slug == "faulty-scientific-calc":
+        st.markdown(
+            """
+            Back in my college days, I used to joke about building a completely faulty scientific calculator as my final year project.
+            Anyone who has ever prepared for the **GATE exam** or appeared for a **TCS iON virtual test** remembers the collective trauma of using their rigid, on-screen exam calculator with a worn-out test center mouse.
 
-        How it works:
-        - The maze is a 2D grid (`1` wall, `0` path, `2` pellet).
-        - You move tile-by-tile with arrow keys and collect pellets to increase score.
-        - A ghost moves through the maze, respects walls, and ends the run on collision.
-        - Press `Space` to activate a short wall-jump window (~300ms) that lets you phase through walls.
-        - Wall jump has a cooldown (~3s), so timing matters.
-        """
-    )
+            I built this satirical web app to recreate the worst possible UX while staying maliciously compliant:
+            - **Broken Mouse Click Resistance**: Buttons require between 2 and 4 rapid clicks before registering key contact, simulating dust under the exam center rubber membrane.
+            - **Keypad Musical Chairs**: Every few clicks, the numeric buttons scramble their positions.
+            - **Multilingual Script Roulette**: Number labels swap into Devanagari numerals (`१, २, ३...`) or Roman numerals, while trig functions translate literally into Hindi (`sin` -> *पाप*, `log` -> *लकड़ी*).
+            - **Absurd & Over-Engineered Math**: `1 + 1` evaluates to `sin(90°) + cos(0°)`, `5 * 5` outputs `24.999999999999996 ± 4.2e-16`, and zero division deducts 2.67 negative marks.
+            - **Proctor Paranoia Simulator**: Periodic notifications warn you about suspicious blinking or excessive quietness in the examination hall.
+            """
+        )
+    else:
+        st.markdown(
+            """
+            I wanted to add more interactive displays to my portfolio, and a Pac-Man-inspired mini game felt like a strong way to do it.
+            The goal was to challenge myself to build a clean browser game using only HTML, CSS, JavaScript, and the Canvas API,
+            then embed it inside Streamlit with `st.components.v1.html()`.
+
+            How it works:
+            - The maze is a 2D grid (`1` wall, `0` path, `2` pellet).
+            - You move tile-by-tile with arrow keys and collect pellets to increase score.
+            - A ghost moves through the maze, respects walls, and ends the run on collision.
+            - Press `Space` to activate a short wall-jump window (~300ms) that lets you phase through walls.
+            - Wall jump has a cooldown (~3s), so timing matters.
+            """
+        )
 
 
 def _render_embed(project):
