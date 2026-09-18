@@ -407,7 +407,6 @@
       <div class="radio-group">
         <label><input type="radio" name="angle" value="deg" id="degRadio" checked /> Deg</label>
         <label><input type="radio" name="angle" value="rad" id="radRadio" /> Rad</label>
-        <label><input type="radio" name="angle" value="vibes" id="vibesRadio" /> Vibes Mode</label>
       </div>
       <div class="chaos-hud">
         <span class="badge-bad" id="resistanceHud">Broken Mouse: Active</span>
@@ -480,18 +479,8 @@
     </div>
   </div>
 
-  <!-- Chaos Configuration / Easter Egg Toggles -->
-  <div class="meta-panel">
-    <h4>Faulty Calculator Specs &amp; Malice Settings</h4>
-    <div class="chaos-toggles">
-      <label><input type="checkbox" id="cfgShuffle" checked /> Keypad Musical Chairs</label>
-      <label><input type="checkbox" id="cfgScript" checked /> Script Roulette (Devanagari/Roman)</label>
-      <label><input type="checkbox" id="cfgResistance" checked /> Broken Mouse Click Resistance</label>
-      <label><input type="checkbox" id="cfgAbsurd" checked /> Over-Engineered Math (1+1 = sin(90))</label>
-      <label><input type="checkbox" id="cfgProctor" checked /> Proctor Paranoia</label>
-    </div>
-    <div style="margin-top:8px; font-size:11px; color:#94a3b8;">
-      Built as a satirical tribute to the infamous GATE / TCS iON on-screen exam calculator that engineering students battle every year.
+    <div style="margin-top:14px; width:100%; max-width:580px; text-align:center; font-size:11px; color:#64748b;">
+      A satirical tribute to the infamous GATE / TCS iON on-screen exam calculator that engineering students battle every year.
     </div>
   </div>
 
@@ -563,13 +552,6 @@
     const examTimer = document.getElementById("examTimer");
     const calcWindow = document.getElementById("calcWindow");
 
-    // Checkbox configurations
-    const cfgShuffle = document.getElementById("cfgShuffle");
-    const cfgScript = document.getElementById("cfgScript");
-    const cfgResistance = document.getElementById("cfgResistance");
-    const cfgAbsurd = document.getElementById("cfgAbsurd");
-    const cfgProctor = document.getElementById("cfgProctor");
-
     // Audio toggle
     document.getElementById("btnSound").addEventListener("click", () => {
       soundEnabled = !soundEnabled;
@@ -591,12 +573,8 @@
       examTimer.textContent = `${h}:${m}:${s}`;
     }, 1000);
 
-    // Proctor warning cycle
+    // Proctor warning cycle (always active in background)
     setInterval(() => {
-      if (!cfgProctor.checked) {
-        proctorAlert.style.display = "none";
-        return;
-      }
       if (Math.random() < 0.35) {
         proctorMsg.textContent = PROCTOR_MSGS[Math.floor(Math.random() * PROCTOR_MSGS.length)];
         proctorAlert.style.display = "block";
@@ -605,9 +583,8 @@
       }
     }, 12000);
 
-    // Click resistance logic (The worn-out TCS iON mouse)
+    // Click resistance logic (The worn-out TCS iON mouse - always active)
     function checkClickResistance(btn) {
-      if (!cfgResistance.checked) return true;
 
       let required = btn.dataset.requiredClicks;
       if (!required) {
@@ -641,9 +618,8 @@
       }
     }
 
-    // Keypad shuffle (Musical Chairs)
+    // Keypad shuffle (Musical Chairs - always active in background)
     function shuffleKeys() {
-      if (!cfgShuffle.checked) return;
       const numBtns = Array.from(keypad.querySelectorAll(".btn.num"));
       const parents = numBtns.map(b => b.parentNode);
       
@@ -656,18 +632,8 @@
       }
     }
 
-    // Script Roulette (Multilingual text swaps)
+    // Script Roulette (Multilingual text swaps - always active in background)
     function applyScriptRoulette() {
-      if (!cfgScript.checked) {
-        keypad.querySelectorAll(".btn").forEach(btn => {
-          const badge = btn.querySelector(".click-res-badge");
-          const orig = ORIGINAL_LABELS.get(btn) || btn.textContent;
-          btn.textContent = orig;
-          if (badge) btn.appendChild(badge);
-        });
-        return;
-      }
-
       const mode = Math.random();
       keypad.querySelectorAll(".btn.num").forEach(btn => {
         const val = btn.dataset.insert;
@@ -683,7 +649,7 @@
         }
       });
 
-      // Hilarious literal translation on trig buttons
+      // Literal translation on trig buttons
       const trigTranslations = {
         "sin(": "पाप",
         "cos(": "कोस",
@@ -724,6 +690,12 @@
         return "GATE score -2.67 (Reckless optimism)";
       }
 
+      // Background Vibes Mode (randomly triggers ~20% of the time)
+      if (Math.random() < 0.20) {
+        const vibes = ["feeling bullish", "pretty high tbh", "lukewarm", "mid", "astrologically aligned", "4.000 (roughly)", "vibes are off today"];
+        return vibes[Math.floor(Math.random() * vibes.length)];
+      }
+
       // Try actual evaluation
       try {
         let clean = expr
@@ -737,12 +709,6 @@
           .replace(/sqrt\(/g, "Math.sqrt(")
           .replace(/ln\(/g, "Math.log(")
           .replace(/\^/g, "**");
-
-        // Vibes Mode check
-        if (document.getElementById("vibesRadio").checked) {
-          const vibes = ["feeling bullish", "pretty high tbh", "lukewarm", "mid", "astrologically aligned", "4.000 (roughly)"];
-          return vibes[Math.floor(Math.random() * vibes.length)];
-        }
 
         // Angle handling for sin/cos
         if (document.getElementById("degRadio").checked) {
@@ -758,8 +724,8 @@
           return "Undefined (Crying in exam hall)";
         }
 
-        // Randomly over-engineer result if checkbox enabled
-        if (cfgAbsurd.checked && Math.random() < 0.45) {
+        // Over-engineer result (~45% chance)
+        if (Math.random() < 0.45) {
           const num = Number(rawRes);
           if (num === 0) return "cos(π / 2)";
           if (num === 1) return "sin(90°) [Q.E.D.]";
