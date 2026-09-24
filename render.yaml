@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: sujash-portfolio
+    env: node
+    rootDir: portfolio-nextjs
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production

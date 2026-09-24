@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Faulty Scientific Calculator - TCS iON Exam Edition</title>
+  <style>
+    :root {
+      --win-border: #4a6ea9;
+      --header-bg: linear-gradient(180deg, #6c8fc7 0%, #3e629b 100%);
+      --body-bg: #e6ebf2;
+      --btn-std: #f3f6fb;
+      --btn-std-border: #9fb2cc;
+      --btn-fn: #d9e3f1;
+      --btn-fn-border: #8ba2c2;
+      --btn-danger: #ff6b6b;
+      --btn-danger-border: #cc3a3a;
+      --btn-primary: #5c84be;
+      --btn-primary-border: #3b5f94;
+      --screen-bg: #ffffff;
+      --screen-text: #1a2533;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0d1a16;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      user-select: none;
+    }
+
+    /* Exam Proctor Header Banner */
+    .exam-banner {
+      width: 100%;
+      max-width: 580px;
+      background: #142823;
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .exam-banner strong { color: #34d399; font-weight: 700; }
+    .timer-box {
+      background: #071511;
+      border: 1px solid #10b981;
+      color: #a7f3d0;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Proctor Alert Toast */
+    .proctor-alert {
+      width: 100%;
+      max-width: 580px;
+      background: #fef2f2;
+      border-left: 4px solid #ef4444;
+      color: #991b1b;
+      padding: 6px 12px;
+      font-size: 11px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: none;
+      animation: alertPulse 1.5s infinite alternate;
+    }
+
+    @keyframes alertPulse {
+      0% { opacity: 0.85; }
+      100% { opacity: 1; transform: scale(1.005); }
+    }
+
+    /* Calculator Window Frame (Authentic TCS iON design) */
+    .calc-window {
+      width: 100%;
+      max-width: 580px;
+      background: var(--body-bg);
+      border: 2px solid var(--win-border);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .window-header {
+      background: var(--header-bg);
+      color: #ffffff;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: default;
+    }
+
+    .window-header .ctrl-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .window-header button {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #fff;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    /* Displays */
+    .calc-screen {
+      background: #f4f6fa;
+      padding: 10px 12px;
+      border-bottom: 1px solid #b8c8dc;
+    }
+
+    .history-display {
+      width: 100%;
+      height: 24px;
+      background: transparent;
+      border: none;
+      text-align: right;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      color: #64748b;
+      outline: none;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .main-display {
+      width: 100%;
+      height: 42px;
+      background: var(--screen-bg);
+      border: 1px solid #99aec9;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+      text-align: right;
+      padding: 4px 10px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--screen-text);
+      outline: none;
+      border-radius: 2px;
+    }
+
+    /* Subheader & Options */
+    .calc-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      background: #d8e2ef;
+      font-size: 11px;
+      border-bottom: 1px solid #b3c5dc;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .radio-group label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .chaos-hud {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-bad {
+      background: #ef4444;
+      color: white;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: bold;
+      animation: blinker 1.8s infinite;
+    }
+
+    @keyframes blinker {
+      50% { opacity: 0.3; }
+    }
+
+    /* Keypad Grid */
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
+      padding: 10px;
+      background: #e6edf5;
+    }
+
+    .btn {
+      height: 38px;
+      background: var(--btn-std);
+      border: 1px solid var(--btn-std-border);
+      border-radius: 3px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      transition: background 0.08s, transform 0.05s;
+      position: relative;
+    }
+
+    .btn:hover {
+      background: #e2eaf5;
+      border-color: #6d8db7;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn.fn {
+      background: var(--btn-fn);
+      border-color: var(--btn-fn-border);
+      color: #1a365d;
+      font-size: 11px;
+    }
+
+    .btn.danger {
+      background: #fee2e2;
+      border-color: #f87171;
+      color: #991b1b;
+      font-weight: bold;
+    }
+
+    .btn.danger:hover {
+      background: #fca5a5;
+    }
+
+    .btn.equals {
+      background: #2563eb;
+      border-color: #1d4ed8;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: bold;
+      grid-column: span 1;
+    }
+
+    .btn.equals:hover {
+      background: #1d4ed8;
+    }
+
+    /* Sub-indicator for resistance */
+    .click-res-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 3px;
+      font-size: 8px;
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    /* Faulty Status Subtext */
+    .calc-footer {
+      background: #cfddec;
+      padding: 6px 12px;
+      font-size: 10.5px;
+      color: #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #b2c4dc;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .share-btn {
+      background: #0f766e;
+      color: #fff;
+      border: none;
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .share-btn:hover {
+      background: #0d9488;
+    }
+
+    /* Chaos Modes Control Panel */
+    .meta-panel {
+      margin-top: 14px;
+      width: 100%;
+      max-width: 580px;
+      background: #10211c;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      border-radius: 6px;
+      padding: 10px 14px;
+      color: #cbd5e1;
+      font-size: 12px;
+    }
+
+    .meta-panel h4 {
+      margin: 0 0 6px 0;
+      color: #34d399;
+      font-size: 13px;
+    }
+
+    .chaos-toggles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .chaos-toggles label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    /* Visual glitch shake */
+    @keyframes screenShake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      20% { transform: translate(-2px, 0px) rotate(-0.5deg); }
+      40% { transform: translate(2px, -1px) rotate(0.5deg); }
+      60% { transform: translate(-1px, 2px) rotate(0deg); }
+      80% { transform: translate(1px, -1px) rotate(0.5deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    .shaking {
+      animation: screenShake 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mock GATE Exam Header -->
+  <div class="exam-banner">
+    <div>
+      <strong>TCS iON Digital Zone</strong> · Exam Center #402 (Noida)
+      <div style="font-size:10px; color:#64748b;">Candidate: Sujash Bharadwaj | GATE-CS-2026</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:10px;">Time Left:</span>
+      <div class="timer-box" id="examTimer">02:44:11</div>
+    </div>
+  </div>
+
+  <!-- Proctor Panic Banner -->
+  <div class="proctor-alert" id="proctorAlert">
+    ⚠️ <strong>PROCTOR NOTICE:</strong> <span id="proctorMsg">Suspicious cursor velocity detected. Please face the webcam.</span>
+  </div>
+
+  <!-- Main Calculator Window -->
+  <div class="calc-window" id="calcWindow">
+    
+    <div class="window-header">
+      <span>Scientific Calculator - [TCS iON Virtual v1.0.84]</span>
+      <div class="ctrl-btns">
+        <button id="btnSound" title="Toggle Sound">🔊 Audio</button>
+        <button id="btnHelp">Help ?</button>
+        <button id="btnMinimize">_</button>
+      </div>
+    </div>
+
+    <!-- Screen Displays -->
+    <div class="calc-screen">
+      <input type="text" class="history-display" id="historyDisp" readonly placeholder="Waiting for query..." />
+      <input type="text" class="main-display" id="mainDisp" readonly value="0" />
+    </div>
+
+    <!-- Radios & Settings -->
+    <div class="calc-controls">
+      <div class="radio-group">
+        <label><input type="radio" name="angle" value="deg" id="degRadio" checked /> Deg</label>
+        <label><input type="radio" name="angle" value="rad" id="radRadio" /> Rad</label>
+      </div>
+      <div class="chaos-hud">
+        <span class="badge-bad" id="resistanceHud">Broken Mouse: Active</span>
+      </div>
+    </div>
+
+    <!-- Keypad Grid (6 columns x 6 rows) -->
+    <div class="keypad-grid" id="keypad">
+      <!-- Row 1 -->
+      <button class="btn fn" data-action="rad_switch">Deg/Rad</button>
+      <button class="btn fn" data-insert="sin(">sin</button>
+      <button class="btn fn" data-insert="cos(">cos</button>
+      <button class="btn fn" data-insert="tan(">tan</button>
+      <button class="btn fn" data-insert="ln(">ln</button>
+      <button class="btn fn" data-insert="log(">log</button>
+
+      <!-- Row 2 -->
+      <button class="btn fn" data-insert="sinh(">sinh</button>
+      <button class="btn fn" data-insert="cosh(">cosh</button>
+      <button class="btn fn" data-insert="tanh(">tanh</button>
+      <button class="btn fn" data-insert="sqrt(">√</button>
+      <button class="btn fn" data-insert="^">xʸ</button>
+      <button class="btn fn" data-insert="1/">1/x</button>
+
+      <!-- Row 3 -->
+      <button class="btn fn" data-insert="pi">π</button>
+      <button class="btn fn" data-insert="e">e</button>
+      <button class="btn fn" data-insert="(">(</button>
+      <button class="btn fn" data-insert=")">)</button>
+      <button class="btn danger" data-action="clear" style="font-size:12px;">AC</button>
+      <button class="btn danger" data-action="backspace" style="font-size:12px;">DEL</button>
+
+      <!-- Row 4 -->
+      <button class="btn num" data-insert="7">7</button>
+      <button class="btn num" data-insert="8">8</button>
+      <button class="btn num" data-insert="9">9</button>
+      <button class="btn fn" data-insert="/">÷</button>
+      <button class="btn fn" data-insert="%">mod</button>
+      <button class="btn fn" data-insert="fact(">n!</button>
+
+      <!-- Row 5 -->
+      <button class="btn num" data-insert="4">4</button>
+      <button class="btn num" data-insert="5">5</button>
+      <button class="btn num" data-insert="6">6</button>
+      <button class="btn fn" data-insert="*">×</button>
+      <button class="btn fn" data-insert="d/dx(">d/dx</button>
+      <button class="btn fn" data-insert="int(">∫</button>
+
+      <!-- Row 6 -->
+      <button class="btn num" data-insert="1">1</button>
+      <button class="btn num" data-insert="2">2</button>
+      <button class="btn num" data-insert="3">3</button>
+      <button class="btn fn" data-insert="-">-</button>
+      <button class="btn num" data-insert="0">0</button>
+      <button class="btn fn" data-insert="+">+</button>
+
+      <!-- Row 7 -->
+      <button class="btn fn" data-insert=".">.</button>
+      <button class="btn fn" data-insert="+/-">±</button>
+      <button class="btn fn" data-action="random_quote" style="font-size:10px;">Excuse</button>
+      <button class="btn equals" data-action="calculate" style="grid-column: span 3;">=</button>
+    </div>
+
+    <!-- Footer Diagnostics -->
+    <div class="calc-footer">
+      <div id="footerStatus">Mouse contact resistance: 100% nominal (Lab 4 dust level: Critical)</div>
+      <div class="footer-actions">
+        <button class="share-btn" id="btnShare">Copy Trauma</button>
+      </div>
+    </div>
+  </div>
+
+    <div style="margin-top:14px; width:100%; max-width:580px; text-align:center; font-size:11px; color:#64748b;">
+      A satirical tribute to the infamous GATE / TCS iON on-screen exam calculator that engineering students battle every year.
+    </div>
+  </div>
+
+  <script>
+    // Audio synthesizer for click and beep effects
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function playClickSound(pitch = 320, duration = 0.04) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new AudioCtx();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playErrorSound() {
+      if (!soundEnabled) return;
+      playClickSound(180, 0.15);
+      setTimeout(() => playClickSound(120, 0.25), 100);
+    }
+
+    // State
+    let currentInput = "0";
+    let historyFormula = "";
+    let clickCounters = new Map(); // tracks resistance clicks per button
+    let totalClicks = 0;
+
+    // Multilingual Dictionaries
+    const HINDI_NUMS = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+    const ROMAN_NUMS = ['O', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
+    const ORIGINAL_LABELS = new Map();
+
+    const PROCTOR_MSGS = [
+      "Room noise detected: Please refrain from deep thinking.",
+      "Warning: Candidate blinked twice in one second. Flagged for review.",
+      "Bandwidth throttle: 4,120 candidates calculating √2 simultaneously.",
+      "Server notice: invigilator is walking towards your desk.",
+      "Webcam verification: Please tilt your forehead 12% to the left.",
+      "Notice: 2.67 negative marks deducted for unprovoked backspaces."
+    ];
+
+    const MATH_EXCUSES = [
+      "Trivial. Left as an exercise to the candidate.",
+      "Proof omitted due to lack of margin space.",
+      "Result requires subscription to TCS iON Premium.",
+      "Why did you waste my clock cycles on this?",
+      "Solution diverges into an unrecoverable mental block.",
+      "GATE AIR 1 cancelled due to floating point heresy."
+    ];
+
+    // DOM Elements
+    const mainDisp = document.getElementById("mainDisp");
+    const historyDisp = document.getElementById("historyDisp");
+    const keypad = document.getElementById("keypad");
+    const proctorAlert = document.getElementById("proctorAlert");
+    const proctorMsg = document.getElementById("proctorMsg");
+    const footerStatus = document.getElementById("footerStatus");
+    const examTimer = document.getElementById("examTimer");
+    const calcWindow = document.getElementById("calcWindow");
+
+    // Audio toggle
+    document.getElementById("btnSound").addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById("btnSound").textContent = soundEnabled ? "🔊 Audio" : "🔇 Muted";
+    });
+
+    // Save original button texts
+    keypad.querySelectorAll(".btn").forEach(btn => {
+      ORIGINAL_LABELS.set(btn, btn.textContent.trim());
+    });
+
+    // Exam countdown simulator
+    let timeLeft = 2 * 3600 + 44 * 60 + 11;
+    setInterval(() => {
+      timeLeft = Math.max(0, timeLeft - 1);
+      const h = String(Math.floor(timeLeft / 3600)).padStart(2, '0');
+      const m = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
+      const s = String(timeLeft % 60).padStart(2, '0');
+      examTimer.textContent = `${h}:${m}:${s}`;
+    }, 1000);
+
+    // Proctor warning cycle (always active in background)
+    setInterval(() => {
+      if (Math.random() < 0.35) {
+        proctorMsg.textContent = PROCTOR_MSGS[Math.floor(Math.random() * PROCTOR_MSGS.length)];
+        proctorAlert.style.display = "block";
+        playErrorSound();
+        setTimeout(() => { proctorAlert.style.display = "none"; }, 4500);
+      }
+    }, 12000);
+
+    // Click resistance logic (The worn-out TCS iON mouse - always active)
+    function checkClickResistance(btn) {
+
+      let required = btn.dataset.requiredClicks;
+      if (!required) {
+        // Randomly assign 1 to 4 clicks requirement to this button
+        required = Math.random() < 0.5 ? Math.floor(Math.random() * 3) + 2 : 1;
+        btn.dataset.requiredClicks = required;
+      }
+
+      let current = (clickCounters.get(btn) || 0) + 1;
+      clickCounters.set(btn, current);
+
+      if (current < required) {
+        playClickSound(200, 0.02);
+        footerStatus.textContent = `Click registered ${current}/${required}. (Broken mouse membrane: Click harder!)`;
+        let badge = btn.querySelector(".click-res-badge");
+        if (!badge) {
+          badge = document.createElement("span");
+          badge.className = "click-res-badge";
+          btn.appendChild(badge);
+        }
+        badge.textContent = `${current}/${required}`;
+        return false;
+      } else {
+        // Threshold met! Reset for next time
+        clickCounters.delete(btn);
+        btn.removeAttribute("data-requiredClicks");
+        const badge = btn.querySelector(".click-res-badge");
+        if (badge) badge.remove();
+        footerStatus.textContent = `Key contact registered! (Mouse health: 23%)`;
+        return true;
+      }
+    }
+
+    // Keypad shuffle (Musical Chairs - always active in background)
+    function shuffleKeys() {
+      const numBtns = Array.from(keypad.querySelectorAll(".btn.num"));
+      const parents = numBtns.map(b => b.parentNode);
+      
+      // Fisher-Yates shuffle on numeric buttons
+      for (let i = numBtns.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tempNext = numBtns[i].nextSibling;
+        parents[i].insertBefore(numBtns[i], numBtns[j]);
+        parents[i].insertBefore(numBtns[j], tempNext);
+      }
+    }
+
+    // Script Roulette (Multilingual text swaps - always active in background)
+    function applyScriptRoulette() {
+      const mode = Math.random();
+      keypad.querySelectorAll(".btn.num").forEach(btn => {
+        const val = btn.dataset.insert;
+        if (val >= "0" && val <= "9") {
+          const digit = parseInt(val, 10);
+          let label = val;
+          if (mode < 0.35) {
+            label = HINDI_NUMS[digit]; // Hindi Devanagari
+          } else if (mode < 0.65) {
+            label = ROMAN_NUMS[digit]; // Roman
+          }
+          btn.textContent = label;
+        }
+      });
+
+      // Literal translation on trig buttons
+      const trigTranslations = {
+        "sin(": "पाप",
+        "cos(": "कोस",
+        "tan(": "टैन",
+        "ln(": "लॉग",
+        "sqrt(": "जड़",
+        "fact(": "फैक्ट"
+      };
+
+      keypad.querySelectorAll(".btn.fn").forEach(btn => {
+        const ins = btn.dataset.insert;
+        if (ins && trigTranslations[ins] && Math.random() < 0.4) {
+          btn.textContent = trigTranslations[ins];
+        } else if (ORIGINAL_LABELS.has(btn)) {
+          btn.textContent = ORIGINAL_LABELS.get(btn);
+        }
+      });
+    }
+
+    // Over-Engineered Math Engine
+    function computeAbsurdResult(expr) {
+      expr = expr.trim();
+
+      // Explicit requested identities
+      if (expr === "1+1" || expr === "1 + 1" || expr === "2") {
+        return "sin(90°) + cos(0°)";
+      }
+      if (expr === "2+2" || expr === "2 + 2" || expr === "4") {
+        return "lim(x→4) [ln(eˣ)]";
+      }
+      if (expr === "5*5" || expr === "5 * 5" || expr === "25") {
+        return "24.999999999999996 ± 4.2e-16";
+      }
+      if (expr === "10/2" || expr === "10 / 2") {
+        return "5! / 24";
+      }
+      if (expr === "0/0" || expr === "1/0" || expr.includes("/0")) {
+        return "GATE score -2.67 (Reckless optimism)";
+      }
+
+      // Background Vibes Mode (randomly triggers ~20% of the time)
+      if (Math.random() < 0.20) {
+        const vibes = ["feeling bullish", "pretty high tbh", "lukewarm", "mid", "astrologically aligned", "4.000 (roughly)", "vibes are off today"];
+        return vibes[Math.floor(Math.random() * vibes.length)];
+      }
+
+      // Try actual evaluation
+      try {
+        let clean = expr
+          .replace(/×/g, "*")
+          .replace(/÷/g, "/")
+          .replace(/pi/g, "Math.PI")
+          .replace(/e/g, "Math.E")
+          .replace(/sin\(/g, "Math.sin(")
+          .replace(/cos\(/g, "Math.cos(")
+          .replace(/tan\(/g, "Math.tan(")
+          .replace(/sqrt\(/g, "Math.sqrt(")
+          .replace(/ln\(/g, "Math.log(")
+          .replace(/\^/g, "**");
+
+        // Angle handling for sin/cos
+        if (document.getElementById("degRadio").checked) {
+          clean = clean.replace(/Math\.sin\(([^)]+)\)/g, "Math.sin(($1) * Math.PI / 180)");
+          clean = clean.replace(/Math\.cos\(([^)]+)\)/g, "Math.cos(($1) * Math.PI / 180)");
+          clean = clean.replace(/Math\.tan\(([^)]+)\)/g, "Math.tan(($1) * Math.PI / 180)");
+        }
+
+        // Evaluate
+        const rawRes = Function(`'use strict'; return (${clean})`)();
+
+        if (isNaN(rawRes)) {
+          return "Undefined (Crying in exam hall)";
+        }
+
+        // Over-engineer result (~45% chance)
+        if (Math.random() < 0.45) {
+          const num = Number(rawRes);
+          if (num === 0) return "cos(π / 2)";
+          if (num === 1) return "sin(90°) [Q.E.D.]";
+          if (num === 3) return "√9 (Exercise for candidate)";
+          if (num > 0) return `${(num - 0.000000000000004).toFixed(15)} (IEEE-754)`;
+        }
+
+        return String(rawRes);
+      } catch (err) {
+        return MATH_EXCUSES[Math.floor(Math.random() * MATH_EXCUSES.length)];
+      }
+    }
+
+    // Keypad Click Handler
+    keypad.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn");
+      if (!btn) return;
+
+      // Check click resistance
+      if (!checkClickResistance(btn)) {
+        return;
+      }
+
+      playClickSound(440, 0.05);
+      totalClicks++;
+
+      const insert = btn.dataset.insert;
+      const action = btn.dataset.action;
+
+      if (insert) {
+        if (currentInput === "0" && !isNaN(insert)) {
+          currentInput = insert;
+        } else {
+          currentInput += insert;
+        }
+        mainDisp.value = currentInput;
+      } else if (action === "clear") {
+        currentInput = "0";
+        historyFormula = "";
+        mainDisp.value = "0";
+        historyDisp.value = "Memory cleared (Hope you remembered that)";
+        playClickSound(180, 0.08);
+      } else if (action === "backspace") {
+        // Cursed DEL: deletes a random char from middle instead of last
+        if (currentInput.length > 1) {
+          const midIdx = Math.floor(Math.random() * (currentInput.length - 1));
+          currentInput = currentInput.slice(0, midIdx) + currentInput.slice(midIdx + 1);
+          footerStatus.textContent = `DEL deleted char at pos ${midIdx + 1} (Oops, bracket destroyed).`;
+        } else {
+          currentInput = "0";
+        }
+        mainDisp.value = currentInput;
+      } else if (action === "calculate") {
+        calcWindow.classList.add("shaking");
+        setTimeout(() => calcWindow.classList.remove("shaking"), 300);
+
+        historyFormula = currentInput;
+        historyDisp.value = `${historyFormula} =`;
+        const result = computeAbsurdResult(currentInput);
+        mainDisp.value = result;
+        currentInput = String(result);
+      } else if (action === "rad_switch") {
+        const deg = document.getElementById("degRadio");
+        const rad = document.getElementById("radRadio");
+        if (deg.checked) { rad.checked = true; } else { deg.checked = true; }
+        footerStatus.textContent = `Angle mode silently changed to ${rad.checked ? 'RAD' : 'DEG'}.`;
+      } else if (action === "random_quote") {
+        mainDisp.value = MATH_EXCUSES[Math.floor(Math.random() * MATH_EXCUSES.length)];
+      }
+
+      // Apply chaos post-click
+      if (totalClicks % 2 === 0) {
+        shuffleKeys();
+      }
+      if (totalClicks % 3 === 0) {
+        applyScriptRoulette();
+      }
+    });
+
+    // Copy Trauma to Clipboard
+    document.getElementById("btnShare").addEventListener("click", () => {
+      const shareText = `I just evaluated "${historyDisp.value || '1 + 1'}" on Sujash's Faulty Scientific Calculator and got "${mainDisp.value}" after 4 clicks on a Devanagari keypad. The GATE exam trauma is real. 💀`;
+      navigator.clipboard.writeText(shareText).then(() => {
+        footerStatus.textContent = "Copied trauma snippet to clipboard! Paste it anywhere!";
+        playClickSound(600, 0.08);
+      });
+    });
+
+    document.getElementById("btnHelp").addEventListener("click", () => {
+      alert("TCS iON Candidate Help:\n\n1. All buttons are functioning according to Ministry of Chaos standards.\n2. In case of button unresponsiveness, please smash your mouse harder.\n3. Angles are measured in Vibes unless verified by the invigilator.\n4. Good luck for your examination!");
+    });
+  </script>
+</body>
+</html>

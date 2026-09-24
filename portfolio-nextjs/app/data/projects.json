@@ -1,0 +1,117 @@
+[
+  {
+    "slug": "flight-tracker-widget",
+    "title": "RJ Airplane Tracker Widget",
+    "desc": "A native Windows desktop widget & live geofenced radar tracking airborne aircraft in real-time around Mumbai International Airport (BOM) using the OpenSky Network API. Built for my friend Rohan Jain who lives next to the runway and wanted instant alerts when planes fly overhead.",
+    "eyebrow": "Native Windows Widget · Systems & Geodata",
+    "tags": ["Python", "Leaflet.js", "OpenSky API", "Geofencing", "pywebview", "Win11 Toast"],
+    "type": "game",
+    "html_file": "index.html",
+    "github_url": "https://github.com/SujashBharadwaj/FlightTrackerApp"
+  },
+  {
+    "slug": "faulty-scientific-calc",
+    "title": "Faulty Scientific Calculator",
+    "desc": "A satirical, maliciously compliant simulation of the infamous GATE / TCS iON on-screen exam calculator with broken mouse click resistance, keypad musical chairs, multilingual script roulette, and absurd calculus outputs.",
+    "eyebrow": "Satirical Engineering · Web App",
+    "tags": ["HTML5/JS", "Web Audio API", "UX Satire", "GATE Exam Trauma", "Streamlit Embed"],
+    "type": "game",
+    "html_file": "index.html"
+  },
+  {
+    "slug": "wall-jump-maze",
+    "title": "Wall Jump Maze Runner",
+    "desc": "Pac-Man-inspired interactive portfolio mini game built in Canvas, with pellet collection, ghost collision, and a timed wall-jump ability.",
+    "eyebrow": "Interactive Mini Game",
+    "tags": ["Canvas API", "JavaScript", "Game Logic", "Streamlit Embed"],
+    "type": "game",
+    "html_file": "index.html"
+  },
+  {
+    "slug": "kaggle-ml-competitions",
+    "title": "Kaggle ML Competitions Suite",
+    "desc": "6 Kaggle competition submissions across two MLP course terms — covering flight price prediction, customer churn classification, restaurant review rating prediction, cinema audience forecasting, and more. Techniques include gradient boosting (XGBoost/LightGBM), feature engineering, NLP pipelines, and ensemble methods.",
+    "eyebrow": "Machine Learning · Kaggle",
+    "tags": ["Kaggle", "XGBoost", "NLP", "Classification", "Regression", "Feature Engineering"],
+    "type": "external",
+    "links": [
+      {"label": "KA1 — Flight Price Prediction", "desc": "Regression on flight ticket data using XGBoost with feature engineering on routes, stops, and departure time.", "url": "https://www.kaggle.com/code/sujashbharadwaj/23f1000914-kaggle-assignment-1"},
+      {"label": "KA2 — Customer Churn", "desc": "Binary classification predicting bank customer exit using gradient boosting and class-imbalance handling.", "url": "https://www.kaggle.com/code/sujashbharadwaj/kaggle-assignment-2"},
+      {"label": "KA3 — Review Rating Prediction", "desc": "NLP pipeline predicting eatery ratings from customer reviews using TF-IDF and ensemble models.", "url": "https://www.kaggle.com/code/sujashbharadwaj/kaggle-assignment-3"},
+      {"label": "Cinema Audience Forecasting", "desc": "Time-series forecasting of cinema footfall using lag features, rolling statistics, and LightGBM.", "url": "https://www.kaggle.com/code/sujashbharadwaj/23f1000914-notebook-t32025"},
+      {"label": "T3 KA1", "desc": "Term 3 competition — structured data classification with hyperparameter-tuned tree ensembles.", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-kaggle-assignment-1-ka1"},
+      {"label": "T3 KA2", "desc": "Term 3 competition — multi-class prediction with stacked generalization and feature selection.", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-2025-kaggle-assignment-2"},
+      {"label": "T3 KA3", "desc": "Term 3 competition — regression task with advanced feature engineering and cross-validation.", "url": "https://www.kaggle.com/code/sujashbharadwaj/mlp-term-3-2025-kaggle-assignment-3"}
+    ]
+  },
+  {
+    "slug": "mca-agent",
+    "title": "MCA Agent — Agentic AI RAG",
+    "desc": "An experimental Retrieval-Augmented Generation (RAG) agent built to explore agentic AI patterns — document ingestion, vector search, and LLM-powered Q&A. Work-in-progress.",
+    "eyebrow": "Agentic AI · Experimental",
+    "tags": ["RAG", "LLM", "Vector DB", "Agentic AI", "Python"],
+    "type": "external",
+    "links": [
+      {"label": "GitHub Repository", "desc": "Ingests documents into a vector store, retrieves relevant chunks, and generates LLM answers with source citations.", "url": "https://github.com/SujashBharadwaj/mca-agent"}
+    ]
+  },
+  {
+    "slug": "trekking-management-mad1",
+    "title": "Trekking Management App (MAD-1)",
+    "desc": "Full-stack web application for managing trekking expeditions — staff payouts, expense tracking, expedition bookings, debrief reports, and SQLite-backed data persistence. Built and evaluated under strict architecture standards for IIT Madras MAD-1 course.",
+    "eyebrow": "Full-Stack · Flask Live App",
+    "tags": ["Python", "Flask", "SQLAlchemy", "SQLite", "Jinja2", "HTML5/CSS3", "IIT Madras"],
+    "type": "live_app",
+    "live_url": "https://mad-1-project-g7e0.onrender.com/",
+    "github_url": "https://github.com/SujashBharadwaj/TrekkingManagementAppMAD1PROJECT",
+    "credentials": [
+      {"role": "Admin", "username": "admin", "password": "admin123"},
+      {"role": "Staff", "username": "staff1 or staff2", "password": "staff123"},
+      {"role": "Trekker", "username": "user1", "password": "user123"}
+    ]
+  },
+  {
+    "slug": "EnergyEquitiesMI",
+    "title": "Energy Equities MI Reporting",
+    "desc": "Dataset generation, exception monitoring, and MI-style reporting for 10 NSE energy companies.",
+    "eyebrow": "Operations + Reporting",
+    "tags": ["Google Sheets", "MI Reporting", "Data QA", "Process Documentation"],
+    "type": "embed",
+    "sheet_url": "https://docs.google.com/spreadsheets/d/1M6gXq5Dq1Al95RO6OqCx3ZyLTTeW2uLR7vi1UGiqBWk/edit?usp=sharing",
+    "pdf_file": "Process_Report.pdf"
+  },
+  {
+    "slug": "commodity-equity-linkages",
+    "title": "Commodity-Equity Linkages",
+    "desc": "Global commodities vs Nifty 50 with timing, causality, rolling betas, and a ranked indicator dashboard. Embedded full report.",
+    "eyebrow": "Market Analysis",
+    "tags": ["Econometrics", "Rolling Betas", "Causality Tests", "Nifty 50"],
+    "type": "report",
+    "pdf_file": "final_report.pdf"
+  },
+  {
+    "slug": "BDMcapstone",
+    "title": "IITM BDM Capstone",
+    "desc": "Client segmentation and retention analysis for Raftaar. Proposal, midterm, final, and presentation embedded on one page.",
+    "eyebrow": "Capstone Study",
+    "tags": ["Customer Analytics", "Retention", "Business Research", "Presentation"],
+    "type": "multi_report",
+    "pdfs": [
+      {"name": "proposal.pdf", "label": "Proposal"},
+      {"name": "midterm.pdf", "label": "Midterm"},
+      {"name": "final.pdf", "label": "Final"},
+      {"name": "presentation.pdf", "label": "Presentation"}
+    ]
+  },
+  {
+    "slug": "database-study",
+    "title": "DatabaseStudy — Chaos ERP Database",
+    "desc": "Open-source chaos-simulated enterprise ERP database generator. 28 interconnected tables spanning Finance, Sales, Procurement, Inventory, Logistics, and HR — loaded with dirty nulls, embedded JSON payloads, mixed date formats, orphan foreign keys, and ledger imbalances. Fully randomized on every run.",
+    "eyebrow": "Open Source · Database & Analytics Engineering",
+    "tags": ["Python", "SQLite", "Open Source", "Data Engineering", "ERP", "SQL Challenges"],
+    "type": "db_study",
+    "github_url": "https://github.com/SujashBharadwaj/DatabaseStudy",
+    "sample_tables": ["invoices", "sales_orders", "gl_journal_lines", "customers", "employees"]
+  }
+]
+

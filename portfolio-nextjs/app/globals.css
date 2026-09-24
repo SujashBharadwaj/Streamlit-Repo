@@ -1,0 +1,337 @@
+/* ═══════════════════════════════════════════
+   STARRY NIGHT DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --night-obsidian: #060809;
+  --night-surface: #0D131D;
+  --night-card: #101827;
+  --twilight-blue: #32567E;
+  --celestial-blue: #72A1DE;
+  --starlight-mist: #CAD6F2;
+  --pine-shadow: #2A2C22;
+  --night-border: rgba(202, 214, 242, 0.12);
+  --night-glow: rgba(114, 161, 222, 0.08);
+}
+
+/* ═══════════════════════════════════════════
+   BASE RESET
+   ═══════════════════════════════════════════ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Copperplate Gothic Bold", "Copperplate Gothic", "Copperplate", "Cinzel", sans-serif;
+  color: var(--starlight-mist);
+  background: var(--night-obsidian);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Starfield radial base */
+.starfield-bg {
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(50, 86, 126, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 110%, rgba(42, 44, 34, 0.15) 0%, transparent 40%),
+    var(--night-obsidian);
+}
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════ */
+.sidebar {
+  width: 260px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba(10, 14, 21, 0.96);
+  border-right: 1px solid var(--night-border);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  backdrop-filter: blur(16px);
+}
+
+.sidebar-name {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--starlight-mist);
+  letter-spacing: 0.8px;
+}
+
+.sidebar-role {
+  font-size: 0.85rem;
+  color: rgba(202, 214, 242, 0.6);
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+.version-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(114, 161, 222, 0.40);
+  background: rgba(114, 161, 222, 0.12);
+  font-size: 0.78rem;
+  color: var(--celestial-blue);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.sidebar-nav {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: rgba(202, 214, 242, 0.70);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background: rgba(114, 161, 222, 0.10);
+  color: var(--starlight-mist);
+}
+
+.sidebar-link.active {
+  background: rgba(114, 161, 222, 0.14);
+  color: var(--celestial-blue);
+  border: 1px solid rgba(114, 161, 222, 0.25);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  gap: 12px;
+  padding-top: 1rem;
+}
+
+.sidebar-footer a {
+  color: rgba(202, 214, 242, 0.50);
+  transition: color 0.2s;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.sidebar-footer a:hover {
+  color: var(--celestial-blue);
+}
+
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════ */
+.main-content {
+  margin-left: 260px;
+  padding: 2.5rem 3rem;
+  max-width: 1100px;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════
+   CARDS
+   ═══════════════════════════════════════════ */
+.card {
+  border: 1px solid var(--night-border);
+  background: linear-gradient(180deg, rgba(16, 24, 39, 0.88), rgba(10, 14, 21, 0.95));
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.25s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  border-color: rgba(114, 161, 222, 0.30);
+}
+
+/* ═══════════════════════════════════════════
+   PROJECT CARDS
+   ═══════════════════════════════════════════ */
+.project-card {
+  border: 1px solid var(--night-border);
+  background: linear-gradient(180deg, rgba(16, 24, 39, 0.92), rgba(10, 14, 21, 0.96));
+  border-radius: 16px;
+  padding: 18px 20px;
+  min-height: 170px;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+}
+
+.project-card:hover {
+  border-color: rgba(114, 161, 222, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+.eyebrow {
+  color: var(--celestial-blue);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.project-title {
+  font-size: 1.22rem;
+  font-weight: 800;
+  color: var(--starlight-mist);
+  margin-bottom: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   PILLS & CHIPS
+   ═══════════════════════════════════════════ */
+.pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(114, 161, 222, 0.22);
+  background: rgba(114, 161, 222, 0.08);
+  color: var(--starlight-mist);
+  font-size: 0.88rem;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(114, 161, 222, 0.20);
+  background: rgba(114, 161, 222, 0.08);
+  color: var(--starlight-mist);
+  font-size: 0.78rem;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(114, 161, 222, 0.25);
+  background: rgba(114, 161, 222, 0.08);
+  color: var(--starlight-mist);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn:hover {
+  border-color: rgba(114, 161, 222, 0.55);
+  background: rgba(114, 161, 222, 0.18);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: rgba(114, 161, 222, 0.18);
+  border-color: rgba(114, 161, 222, 0.40);
+  color: var(--celestial-blue);
+}
+
+.btn-primary:hover {
+  background: rgba(114, 161, 222, 0.30);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Copperplate Gothic Bold", "Copperplate Gothic", "Copperplate", "Cinzel", sans-serif;
+  color: var(--starlight-mist);
+  letter-spacing: 0.5px;
+}
+
+h1 { font-size: 2.2rem; font-weight: 900; line-height: 1.15; }
+h2 { font-size: 1.6rem; font-weight: 800; }
+h3 { font-size: 1.25rem; font-weight: 700; }
+
+p, li {
+  font-size: 1.02rem;
+  line-height: 1.72;
+  color: rgba(202, 214, 242, 0.82);
+}
+
+a {
+  color: var(--celestial-blue);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #E0E8FA;
+  text-decoration: underline;
+}
+
+.muted {
+  color: rgba(202, 214, 242, 0.62);
+}
+
+code {
+  background: rgba(202, 214, 242, 0.08);
+  color: var(--celestial-blue);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--night-border);
+    padding: 1.2rem 1rem;
+  }
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 0.8rem;
+    gap: 2px;
+  }
+  .sidebar-link {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  .sidebar-footer {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 1.5rem 1rem;
+  }
+  h1 { font-size: 1.8rem; }
+}

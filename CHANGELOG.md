@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## [v3.0.0] — 2026-09-25
 
 ### Added
+- **Next.js 14 Migration**: Completely ported the portfolio from Streamlit to a production-ready Next.js 14 static application. Configured the app inside `portfolio-nextjs/` for high performance, eliminating Streamlit frontend latency and enabling seamless iframe integrations.
+- **Render Deployment Support**: Created `render.yaml` at repository root specifically configuring Render to build and launch the newly migrated Next.js application, enabling hosting out of a private GitHub repository.
 - **RJ Airplane Tracker Widget**: Live aerospace radar and geofenced tracker around Mumbai International Airport (BOM / VABB) (`projects_static/flight-tracker-widget/`). Features Leaflet.js real-time radar simulation, CartoDB dark tiles, official Survey of India (SOI) composite vector boundaries (`india_boundary.js`), aircraft telemetry card popup, dynamic geofencing rings (5–30 km), and speed controls.
 - **Why I Built This Backstory**: Added personal story for friend Rohan Jain who lives right next to the Mumbai airport runway and requested desktop alerts for overhead aircraft. Highlights OpenSky API reverse-engineering, spatial Haversine geofencing, native Windows `pywebview` engineering, and Windows 11 toast notifications.
 - **Top Featured Project Showcase**: Promoted RJ Airplane Tracker Widget as the #1 project across the portfolio homepage and project catalog.

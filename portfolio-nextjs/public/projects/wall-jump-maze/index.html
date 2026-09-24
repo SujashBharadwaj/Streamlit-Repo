@@ -1,0 +1,445 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wall Jump Maze Runner</title>
+  <style>
+    :root {
+      --bg: #05070d;
+      --panel: #0a1020;
+      --wall: #1236b8;
+      --wall-edge: #5aa8ff;
+      --path: #0b1324;
+      --pellet: #7ee8ff;
+      --player: #ffd34d;
+      --ghost: #ff4f6d;
+      --text: #dce8ff;
+      --ok: #3ad184;
+      --warn: #ffcd57;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: radial-gradient(circle at top, #101f3d 0%, var(--bg) 50%, #020306 100%);
+      color: var(--text);
+      font-family: Segoe UI, Tahoma, sans-serif;
+      height: 100%;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      background: rgba(10, 16, 32, 0.92);
+      border: 1px solid rgba(120, 170, 255, 0.3);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hud strong { color: #ffffff; }
+    .hint { color: #adc2f3; font-size: 13px; }
+    .status-ok { color: var(--ok); }
+    .status-warn { color: var(--warn); }
+    .status-bad { color: var(--ghost); }
+
+    canvas {
+      display: block;
+      width: 100%;
+      max-width: 832px;
+      aspect-ratio: 26 / 19;
+      margin: 0 auto;
+      border-radius: 12px;
+      border: 1px solid rgba(120, 170, 255, 0.35);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.5);
+      background: #050915;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 8px;
+      min-height: 24px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hud">
+      <div>Score: <strong id="score">0</strong></div>
+      <div>Pellets: <strong id="pellets">0</strong></div>
+      <div>Wall Jump: <strong id="jumpState" class="status-ok">Ready</strong></div>
+      <div class="hint">Arrows: move, Space: wall jump (0.3s), cooldown: 3s</div>
+    </div>
+    <canvas id="game" width="832" height="608" aria-label="Wall Jump Maze game canvas"></canvas>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    const TILE = 32;
+    const PLAYER_STEP_MS = 120;
+    const GHOST_STEP_MS = 170;
+    const JUMP_DURATION_MS = 300;
+    const JUMP_COOLDOWN_MS = 3000;
+
+    const mapTemplate = [
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,1],
+      [1,2,1,1,1,2,1,2,1,2,1,1,1,1,1,2,1,1,2,1,2,1,1,1,2,1],
+      [1,2,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1,2,2,2,1,2,1],
+      [1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1,1,1,2,1,1,1,2,1,2,1],
+      [1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1,2,2,2,1],
+      [1,1,1,2,1,2,1,2,1,1,1,2,1,1,1,2,1,2,1,1,2,1,1,1,2,1],
+      [1,2,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,2,2,1],
+      [1,2,1,1,1,1,1,1,1,2,1,1,1,2,1,1,1,2,1,2,1,1,1,1,2,1],
+      [1,2,2,2,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+      [1,2,1,1,1,1,1,2,1,1,1,2,1,1,1,2,1,1,1,2,1,2,1,1,1,1],
+      [1,2,2,2,1,2,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,1],
+      [1,1,1,2,1,2,1,1,1,2,1,1,1,2,1,1,1,2,1,1,1,2,1,2,1,1],
+      [1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+      [1,2,1,1,1,1,1,2,1,1,1,2,1,1,1,2,1,1,1,2,1,1,1,1,2,1],
+      [1,2,2,2,2,2,1,2,2,2,1,2,2,2,2,2,2,2,1,2,2,2,2,1,2,1],
+      [1,2,1,1,1,2,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,2,1,2,1],
+      [1,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
+
+    const DIRS = {
+      ArrowUp: { x: 0, y: -1 },
+      ArrowDown: { x: 0, y: 1 },
+      ArrowLeft: { x: -1, y: 0 },
+      ArrowRight: { x: 1, y: 0 }
+    };
+
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const pelletsEl = document.getElementById('pellets');
+    const jumpStateEl = document.getElementById('jumpState');
+    const messageEl = document.getElementById('message');
+
+    let map = [];
+    let pelletCount = 0;
+    let score = 0;
+    let gameOver = false;
+    let win = false;
+
+    const player = {
+      x: 1,
+      y: 1,
+      dir: 'ArrowRight',
+      nextDir: 'ArrowRight',
+      jumpUntil: 0,
+      jumpCooldownUntil: 0,
+      moveAcc: 0
+    };
+
+    const ghost = {
+      x: 24,
+      y: 17,
+      dir: 'ArrowLeft',
+      moveAcc: 0
+    };
+
+    function cloneMap() {
+      return mapTemplate.map(row => row.slice());
+    }
+
+    function resetGame() {
+      map = cloneMap();
+      score = 0;
+      gameOver = false;
+      win = false;
+      player.x = 1;
+      player.y = 1;
+      player.dir = 'ArrowRight';
+      player.nextDir = 'ArrowRight';
+      player.jumpUntil = 0;
+      player.jumpCooldownUntil = 0;
+      player.moveAcc = 0;
+      ghost.x = 24;
+      ghost.y = 17;
+      ghost.dir = 'ArrowLeft';
+      ghost.moveAcc = 0;
+
+      if (map[player.y][player.x] === 2) {
+        map[player.y][player.x] = 0;
+      }
+      if (map[ghost.y][ghost.x] === 2) {
+        map[ghost.y][ghost.x] = 0;
+      }
+
+      pelletCount = countPellets();
+      updateHud(0);
+      messageEl.textContent = '';
+    }
+
+    function countPellets() {
+      let count = 0;
+      for (const row of map) {
+        for (const cell of row) {
+          if (cell === 2) count += 1;
+        }
+      }
+      return count;
+    }
+
+    function withinBounds(x, y) {
+      return y >= 0 && y < map.length && x >= 0 && x < map[0].length;
+    }
+
+    function canMove(x, y, dir, canPhaseWalls) {
+      const d = DIRS[dir];
+      const nx = x + d.x;
+      const ny = y + d.y;
+      if (!withinBounds(nx, ny)) return false;
+      if (canPhaseWalls) return true;
+      return map[ny][nx] !== 1;
+    }
+
+    function tryMove(entity, dir, canPhaseWalls) {
+      if (!canMove(entity.x, entity.y, dir, canPhaseWalls)) return false;
+      entity.x += DIRS[dir].x;
+      entity.y += DIRS[dir].y;
+      entity.dir = dir;
+      return true;
+    }
+
+    function collectPellet() {
+      if (map[player.y][player.x] === 2) {
+        map[player.y][player.x] = 0;
+        score += 10;
+        pelletCount -= 1;
+        if (pelletCount <= 0) {
+          win = true;
+          messageEl.textContent = 'You cleared the maze. Press Enter to play again.';
+        }
+      }
+    }
+
+    function ghostDirectionChoices() {
+      const valid = [];
+      for (const dir of Object.keys(DIRS)) {
+        if (canMove(ghost.x, ghost.y, dir, false)) valid.push(dir);
+      }
+      return valid;
+    }
+
+    function chooseGhostDirection() {
+      const valid = ghostDirectionChoices();
+      if (valid.length === 0) return ghost.dir;
+
+      const chase = Math.random() < 0.7;
+      if (!chase) {
+        return valid[Math.floor(Math.random() * valid.length)];
+      }
+
+      let bestDir = valid[0];
+      let bestDist = Number.POSITIVE_INFINITY;
+      for (const dir of valid) {
+        const nx = ghost.x + DIRS[dir].x;
+        const ny = ghost.y + DIRS[dir].y;
+        const dist = Math.abs(player.x - nx) + Math.abs(player.y - ny);
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestDir = dir;
+        }
+      }
+      return bestDir;
+    }
+
+    function checkCollision() {
+      if (player.x === ghost.x && player.y === ghost.y) {
+        gameOver = true;
+        messageEl.textContent = 'Ghost caught you. Press Enter to restart.';
+      }
+    }
+
+    function updateHud(now) {
+      scoreEl.textContent = String(score);
+      pelletsEl.textContent = String(pelletCount);
+
+      if (now < player.jumpUntil) {
+        jumpStateEl.textContent = 'ACTIVE';
+        jumpStateEl.className = 'status-warn';
+      } else if (now < player.jumpCooldownUntil) {
+        const msLeft = Math.max(0, Math.ceil(player.jumpCooldownUntil - now));
+        jumpStateEl.textContent = 'Cooldown ' + (msLeft / 1000).toFixed(1) + 's';
+        jumpStateEl.className = 'status-bad';
+      } else {
+        jumpStateEl.textContent = 'Ready';
+        jumpStateEl.className = 'status-ok';
+      }
+    }
+
+    function updatePlayer(dt, now) {
+      player.moveAcc += dt;
+      if (player.moveAcc < PLAYER_STEP_MS) return;
+      player.moveAcc -= PLAYER_STEP_MS;
+
+      const jumpActive = now < player.jumpUntil;
+
+      if (canMove(player.x, player.y, player.nextDir, jumpActive)) {
+        tryMove(player, player.nextDir, jumpActive);
+      } else {
+        tryMove(player, player.dir, jumpActive);
+      }
+
+      collectPellet();
+      checkCollision();
+    }
+
+    function updateGhost(dt) {
+      ghost.moveAcc += dt;
+      if (ghost.moveAcc < GHOST_STEP_MS) return;
+      ghost.moveAcc -= GHOST_STEP_MS;
+
+      const dir = chooseGhostDirection();
+      tryMove(ghost, dir, false);
+      checkCollision();
+    }
+
+    function drawMap() {
+      for (let y = 0; y < map.length; y += 1) {
+        for (let x = 0; x < map[0].length; x += 1) {
+          const cell = map[y][x];
+          const px = x * TILE;
+          const py = y * TILE;
+
+          if (cell === 1) {
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--wall');
+            ctx.fillRect(px, py, TILE, TILE);
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--wall-edge');
+            ctx.lineWidth = 1;
+            ctx.strokeRect(px + 0.5, py + 0.5, TILE - 1, TILE - 1);
+          } else {
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--path');
+            ctx.fillRect(px, py, TILE, TILE);
+            if (cell === 2) {
+              ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--pellet');
+              ctx.beginPath();
+              ctx.arc(px + TILE / 2, py + TILE / 2, 3, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        }
+      }
+    }
+
+    function drawPlayer(now) {
+      const cx = player.x * TILE + TILE / 2;
+      const cy = player.y * TILE + TILE / 2;
+      const mouth = 0.23 + Math.abs(Math.sin(now / 110)) * 0.22;
+
+      let angle = 0;
+      if (player.dir === 'ArrowUp') angle = -Math.PI / 2;
+      if (player.dir === 'ArrowDown') angle = Math.PI / 2;
+      if (player.dir === 'ArrowLeft') angle = Math.PI;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--player');
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, TILE * 0.36, mouth, Math.PI * 2 - mouth);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      if (now < player.jumpUntil) {
+        ctx.strokeStyle = 'rgba(126, 232, 255, 0.9)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, TILE * 0.42, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    function drawGhost() {
+      const cx = ghost.x * TILE + TILE / 2;
+      const cy = ghost.y * TILE + TILE / 2;
+      const r = TILE * 0.35;
+
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ghost');
+      ctx.beginPath();
+      ctx.arc(cx, cy - 2, r, Math.PI, 0);
+      ctx.lineTo(cx + r, cy + r);
+      ctx.lineTo(cx + r * 0.5, cy + r * 0.6);
+      ctx.lineTo(cx, cy + r);
+      ctx.lineTo(cx - r * 0.5, cy + r * 0.6);
+      ctx.lineTo(cx - r, cy + r);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#f8f9ff';
+      ctx.beginPath();
+      ctx.arc(cx - 5, cy - 4, 4, 0, Math.PI * 2);
+      ctx.arc(cx + 5, cy - 4, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#2a3f7f';
+      ctx.beginPath();
+      ctx.arc(cx - 5, cy - 3, 2, 0, Math.PI * 2);
+      ctx.arc(cx + 5, cy - 3, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function draw(now) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawMap();
+      drawPlayer(now);
+      drawGhost();
+    }
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(40, now - last);
+      last = now;
+
+      if (!gameOver && !win) {
+        updatePlayer(dt, now);
+        updateGhost(dt);
+      }
+
+      updateHud(now);
+      draw(now);
+      requestAnimationFrame(loop);
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key in DIRS) {
+        player.nextDir = event.key;
+        event.preventDefault();
+        return;
+      }
+
+      if (event.code === 'Space') {
+        const now = performance.now();
+        if (!gameOver && !win && now >= player.jumpCooldownUntil) {
+          player.jumpUntil = now + JUMP_DURATION_MS;
+          player.jumpCooldownUntil = now + JUMP_COOLDOWN_MS;
+        }
+        event.preventDefault();
+        return;
+      }
+
+      if (event.key === 'Enter' && (gameOver || win)) {
+        resetGame();
+      }
+    });
+
+    resetGame();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
