@@ -1,12 +1,12 @@
 [theme]
 base="dark"
-backgroundColor="#071A14"
-secondaryBackgroundColor="#0B1411"
-textColor="#E5E7EB"
-primaryColor="#10B981"
+backgroundColor="#060809"
+secondaryBackgroundColor="#0D131D"
+textColor="#cad6f2"
+primaryColor="#72a1de"
 
 [theme.sidebar]
-backgroundColor="#0B1411"
-secondaryBackgroundColor="#0E1F18"
-textColor="#E5E7EB"
-primaryColor="#10B981"
+backgroundColor="#0A0E15"
+secondaryBackgroundColor="#111827"
+textColor="#cad6f2"
+primaryColor="#72a1de"

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v3.0.0] — 2026-09-25
+
+### Added
+- **RJ Airplane Tracker Widget**: Live aerospace radar and geofenced tracker around Mumbai International Airport (BOM / VABB) (`projects_static/flight-tracker-widget/`). Features Leaflet.js real-time radar simulation, CartoDB dark tiles, official Survey of India (SOI) composite vector boundaries (`india_boundary.js`), aircraft telemetry card popup, dynamic geofencing rings (5–30 km), and speed controls.
+- **Why I Built This Backstory**: Added personal story for friend Rohan Jain who lives right next to the Mumbai airport runway and requested desktop alerts for overhead aircraft. Highlights OpenSky API reverse-engineering, spatial Haversine geofencing, native Windows `pywebview` engineering, and Windows 11 toast notifications.
+- **Top Featured Project Showcase**: Promoted RJ Airplane Tracker Widget as the #1 project across the portfolio homepage and project catalog.
+
+### Changed
+- **Starry Night Universe Theme**: Redesigned portfolio theme with deep cosmic starry night palette (`#060809` obsidian night, `#32567e` twilight blue, `#72a1de` celestial blue, `#cad6f2` starlight mist, and `#2a2c22` dark shadow).
+- **Universal Typography**: Set **Copperplate Gothic** (`'Copperplate Gothic Bold'`, `'Copperplate'`, `'Cinzel'`, sans-serif) as the primary font universally across all elements (body, headers, buttons, cards, pills, navigation).
+- **Version Bump**: Bumped project release to **v3.0.0 Cosmic Edition**.
+
+---
+
 ## [v2.4.0] — 2026-09-18
 
 ### Added

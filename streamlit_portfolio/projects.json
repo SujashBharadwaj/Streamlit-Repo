@@ -1,5 +1,15 @@
 [
   {
+    "slug": "flight-tracker-widget",
+    "title": "RJ Airplane Tracker Widget",
+    "desc": "A native Windows desktop widget & live geofenced radar tracking airborne aircraft in real-time around Mumbai International Airport (BOM) using the OpenSky Network API. Built for my friend Rohan Jain who lives next to the runway and wanted instant alerts when planes fly overhead.",
+    "eyebrow": "Native Windows Widget · Systems & Geodata",
+    "tags": ["Python", "Leaflet.js", "OpenSky API", "Geofencing", "pywebview", "Win11 Toast"],
+    "type": "game",
+    "html_file": "index.html",
+    "github_url": "https://github.com/SujashBharadwaj/FlightTrackerApp"
+  },
+  {
     "slug": "faulty-scientific-calc",
     "title": "Faulty Scientific Calculator",
     "desc": "A satirical, maliciously compliant simulation of the infamous GATE / TCS iON on-screen exam calculator with broken mouse click resistance, keypad musical chairs, multilingual script roulette, and absurd calculus outputs.",

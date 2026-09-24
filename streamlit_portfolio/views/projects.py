@@ -229,7 +229,23 @@ def _render_game(project):
 
     st.markdown("")
     st.markdown("### Why I Built This")
-    if slug == "faulty-scientific-calc":
+    if slug == "flight-tracker-widget":
+        st.markdown(
+            """
+            My friend **Rohan Jain** lives right next to Mumbai Chhatrapati Shivaji Maharaj International Airport (BOM / VABB). 
+            He often hears roaring jet engines overhead and always wondered: *"Which flight is that? Where is it coming from, and can I catch a glimpse before it banks out over the Arabian Sea?"*
+
+            He asked if we could build a dedicated lightweight app that sends him instant desktop notifications whenever a plane of his choice flies over his rooftop. 
+            
+            Instead of building a heavyweight browser tab, I took this as a challenge to engineer a native Windows desktop widget:
+            - **Live Geofencing Engine**: Built with Python and Haversine spatial math, bounding OpenSky Network ADS-B telemetry to a tight radius (5–30 km) around Mumbai Airport.
+            - **FlightRadar Reverse Engineering & Analysis**: Analyzed real-time radar data feeds and geofence triggering patterns to achieve zero-latency overhead alerts.
+            - **GPU-Accelerated Native GUI**: Implemented via Microsoft Edge WebView2 (`pywebview`) and Leaflet.js with CartoDB dark tiles and official SOI composite Indian boundaries.
+            - **Native Windows Toast Notifications**: Integrated `win11toast` with smart de-duplication, silence seeding on launch, callsign filtering, and altitude thresholds.
+            - **Power & Data Throttling**: Added native Windows Wi-Fi detection to pause polling when running on mobile hotspots or battery.
+            """
+        )
+    elif slug == "faulty-scientific-calc":
         st.markdown(
             """
             Back in my college days, I used to joke about building a completely faulty scientific calculator as my final year project.

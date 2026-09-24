@@ -19,63 +19,67 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Theme + fonts (Crimson Text + Oswald) + UI polish
+# Theme + fonts (Copperplate Gothic everywhere) + Starry Night UI polish
 # ---------------------------
 st.markdown(
     """
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
 
       :root{
-        --bg:#071A14;
-        --surface:#0B1411;
-        --card:#0E1F18;
-        --text:#E5E7EB;
-        --muted:rgba(229,231,235,.78);
-        --border:rgba(229,231,235,.10);
-        --primary:#10B981;
-        --primary2:#34D399;
-        --accent:#A3E635;
-        --shadow:0 10px 30px rgba(0,0,0,.45);
+        --bg:#060809;
+        --surface:#0D131D;
+        --card:#101827;
+        --text:#CAD6F2;
+        --muted:rgba(202,214,242,.75);
+        --border:rgba(202,214,242,.12);
+        --primary:#72A1DE;
+        --primary2:#32567E;
+        --accent:#72A1DE;
+        --shadow:0 10px 30px rgba(0,0,0,.60);
       }
 
-      html, body, [class*="css"]  {
-        font-family: 'Crimson Text', serif !important;
+      html, body, [class*="css"], p, li, span, div, a, button, input, select, textarea {
+        font-family: 'Copperplate Gothic Bold', 'Copperplate Gothic', 'Copperplate', 'Cinzel', sans-serif !important;
         color: var(--text) !important;
       }
 
       h1, h2, h3, h4, h5, h6,
       .stRadio label, .stButton button, .stDownloadButton button,
       [data-testid="stSidebar"] * {
-        font-family: 'Copperplate Gothic', 'Copperplate', 'Oswald', sans-serif !important;
-        letter-spacing: 0.2px;
+        font-family: 'Copperplate Gothic Bold', 'Copperplate Gothic', 'Copperplate', 'Cinzel', sans-serif !important;
+        letter-spacing: 0.5px;
       }
 
       .block-container { padding-top: 1.8rem; max-width: 1120px; }
-      .stApp { background: var(--bg); }
+      .stApp { 
+        background: radial-gradient(ellipse at 50% -20%, #152238 0%, var(--bg) 65%) !important;
+      }
 
       a { color: var(--accent) !important; text-decoration: none; }
-      a:hover { text-decoration: underline; }
+      a:hover { text-decoration: underline; color: #E0E8FA !important; }
 
       .card {
         border: 1px solid var(--border);
-        background: linear-gradient(180deg, rgba(14,31,24,.98), rgba(11,20,17,.98));
+        background: linear-gradient(180deg, rgba(16,24,39,.92), rgba(10,14,21,.95));
         padding: 18px 18px;
         border-radius: 16px;
         box-shadow: var(--shadow);
         margin-bottom: 14px;
+        backdrop-filter: blur(8px);
       }
-      .card:hover { border-color: rgba(163,230,53,.22); }
+      .card:hover { border-color: rgba(114,161,222,.35); }
 
       .muted { color: var(--muted); }
-      .tiny { color: rgba(229,231,235,.70); font-size: 0.95rem; }
+      .tiny { color: rgba(202,214,242,.65); font-size: 0.95rem; }
 
       .pill {
         display: inline-block;
         padding: 4px 10px;
         border-radius: 999px;
-        border: 1px solid rgba(229,231,235,.12);
-        background: rgba(229,231,235,.06);
+        border: 1px solid rgba(114,161,222,.22);
+        background: rgba(114,161,222,.08);
+        color: #CAD6F2 !important;
         margin-right: 6px;
         margin-top: 6px;
         font-size: 0.95rem;
@@ -83,28 +87,29 @@ st.markdown(
 
       .stButton button, .stDownloadButton button {
         border-radius: 12px !important;
-        border: 1px solid rgba(229,231,235,.14) !important;
-        background: rgba(229,231,235,.06) !important;
-        color: rgba(229,231,235,.92) !important;
+        border: 1px solid rgba(114,161,222,.25) !important;
+        background: rgba(114,161,222,.08) !important;
+        color: #CAD6F2 !important;
       }
       .stButton button:hover, .stDownloadButton button:hover {
-        border-color: rgba(163,230,53,.28) !important;
-        color: var(--accent) !important;
+        border-color: rgba(114,161,222,.55) !important;
+        color: #FFFFFF !important;
+        background: rgba(114,161,222,.18) !important;
         transform: translateY(-1px);
       }
 
       [data-testid="stSidebar"] {
-        background: rgba(11,20,17,.92);
-        border-right: 1px solid rgba(229,231,235,.10);
+        background: rgba(10,14,21,.95);
+        border-right: 1px solid var(--border);
       }
       [data-testid="stSidebar"] .block-container { padding-top: 1.6rem; }
 
-      p, li { font-size: 1.08rem; line-height: 1.7; }
-      code { background: rgba(229,231,235,.06) !important; }
+      p, li { font-size: 1.05rem; line-height: 1.7; }
+      code { background: rgba(202,214,242,.08) !important; color: #72A1DE !important; }
 
       .oee-box{
-        border:1px solid rgba(229,231,235,.10);
-        background: rgba(229,231,235,.04);
+        border:1px solid var(--border);
+        background: rgba(202,214,242,.04);
         border-radius: 14px;
         padding: 14px 14px;
         margin-top: 10px;
@@ -112,15 +117,19 @@ st.markdown(
 
       .project-card{
         border: 1px solid var(--border);
-        background: linear-gradient(180deg, rgba(14,31,24,.98), rgba(11,20,17,.98));
+        background: linear-gradient(180deg, rgba(16,24,39,.95), rgba(10,14,21,.98));
         border-radius: 16px;
         padding: 14px 16px;
         min-height: 160px;
         margin-bottom: 8px;
+        backdrop-filter: blur(8px);
+      }
+      .project-card:hover {
+        border-color: rgba(114,161,222,.35);
       }
 
       .project-eyebrow{
-        color: rgba(163,230,53,.92);
+        color: #72A1DE;
         font-size: .88rem;
         text-transform: uppercase;
         letter-spacing: .08em;
@@ -131,6 +140,7 @@ st.markdown(
         font-size: 1.25rem;
         font-weight: 800;
         margin-bottom: 6px;
+        color: #CAD6F2;
       }
 
       .project-chips{ margin-top: 10px; }
@@ -141,9 +151,10 @@ st.markdown(
         margin-right: 6px;
         margin-bottom: 6px;
         border-radius: 999px;
-        border: 1px solid rgba(229,231,235,.16);
-        background: rgba(229,231,235,.05);
+        border: 1px solid rgba(114,161,222,.20);
+        background: rgba(114,161,222,.08);
         font-size: .82rem;
+        color: #CAD6F2;
       }
 
       @media (max-width: 900px){
@@ -192,7 +203,7 @@ if "selected_project" not in st.session_state:
 st.sidebar.markdown("## Sujash Bharadwaj")
 st.sidebar.markdown(sanitize_html('<div class="muted">Portfolio and personal blog</div>'), unsafe_allow_html=True)
 st.sidebar.markdown(
-    sanitize_html('<div style="margin-top:6px;"><span style="display:inline-block; padding:2px 10px; border-radius:999px; border:1px solid rgba(16,185,129,.35); background:rgba(16,185,129,.10); font-size:0.82rem; color:#34D399; letter-spacing:0.04em;">v2.4.0</span></div>'),
+    sanitize_html('<div style="margin-top:6px;"><span style="display:inline-block; padding:2px 10px; border-radius:999px; border:1px solid rgba(114,161,222,.40); background:rgba(114,161,222,.12); font-size:0.82rem; color:#72A1DE; letter-spacing:0.06em; font-weight:700;">v3.0.0</span></div>'),
     unsafe_allow_html=True,
 )
 st.sidebar.markdown("")
