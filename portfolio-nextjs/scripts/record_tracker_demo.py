@@ -18,7 +18,7 @@ from playwright.async_api import async_playwright
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PUBLIC_DIR = PROJECT_ROOT / "public"
 OUTPUT_DIR = PROJECT_ROOT / "public" / "demos"
-TRACKER_URL = "http://localhost:9876/projects/flight-tracker-widget/index.html"
+TRACKER_URL = "http://127.0.0.1:9876/projects/flight-tracker-widget/index.html"
 
 
 def start_local_server(directory: Path, port: int = 9876):
@@ -26,7 +26,7 @@ def start_local_server(directory: Path, port: int = 9876):
     os.chdir(str(directory))
     handler = http.server.SimpleHTTPRequestHandler
     handler.log_message = lambda *_: None  # silence logs
-    server = http.server.HTTPServer(("localhost", port), handler)
+    server = http.server.HTTPServer(("127.0.0.1", port), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     return server
@@ -47,9 +47,10 @@ async def record_demo():
             record_video_size={"width": 1920, "height": 1080},
         )
         page = await context.new_page()
+        page.on("console", lambda msg: print(f"PAGE LOG: {msg.text}"))
 
         print("Navigating to tracker...")
-        await page.goto(TRACKER_URL, wait_until="networkidle")
+        await page.goto(TRACKER_URL, wait_until="domcontentloaded")
         await page.wait_for_timeout(4000)  # let map + tiles render
 
         # --- Interaction sequence ---
