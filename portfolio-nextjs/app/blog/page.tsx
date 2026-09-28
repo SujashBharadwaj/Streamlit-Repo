@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import Link from "next/link";
+import BlogSlider from "../components/BlogSlider";
 
 export const metadata = { title: "Blog | Sujash Bharadwaj" };
 
@@ -22,7 +22,6 @@ function loadPosts(): Post[] {
     const raw = fs.readFileSync(path.join(postsDir, filename), "utf-8");
     const slug = filename.replace(/\.md$/, "");
 
-    // Parse simple YAML frontmatter
     let title = slug;
     let date = "";
     let tags: string[] = [];
@@ -61,22 +60,8 @@ export default function BlogPage() {
   return (
     <>
       <h2>Blog</h2>
-      <p className="muted" style={{ marginBottom: 24 }}>Short learning notes and project logs.</p>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 14 }}>
-        {posts.map((post) => (
-          <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
-            <div className="card" style={{ minHeight: 130, cursor: "pointer" }}>
-              <div style={{ fontSize: "1.08rem", fontWeight: 700 }}>{post.title}</div>
-              <div className="muted" style={{ fontSize: "0.82rem", marginTop: 4 }}>{post.date}</div>
-              <p className="muted" style={{ fontSize: "0.92rem", marginTop: 6 }}>{post.excerpt}…</p>
-              <div style={{ marginTop: 8 }}>
-                {post.tags.slice(0, 3).map((t) => <span key={t} className="chip">{t}</span>)}
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <p className="muted" style={{ marginBottom: 20 }}>Short learning notes and project logs.</p>
+      <BlogSlider posts={posts} />
     </>
   );
 }

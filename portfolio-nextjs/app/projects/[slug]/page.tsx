@@ -69,7 +69,9 @@ export default function ProjectDetailPage({ params }: Props) {
 
       <div className="card" style={{ marginTop: 8 }}>
         <div className="eyebrow">{project.eyebrow}</div>
-        <div style={{ fontSize: "1.35rem", fontWeight: 800 }}>{project.title}</div>
+        <div style={{ fontSize: "1.3rem", fontWeight: 800, fontFamily: "'Syne', 'Inter', sans-serif" }}>
+          {project.title}
+        </div>
         <p className="muted" style={{ marginTop: 8 }}>{project.desc}</p>
         <div style={{ marginTop: 10 }}>
           {project.tags.map((t: string) => <span key={t} className="chip">{t}</span>)}
@@ -97,7 +99,7 @@ export default function ProjectDetailPage({ params }: Props) {
             style={{
               width: "100%",
               height: slug === "faulty-scientific-calc" ? 800 : 700,
-              border: "1px solid var(--night-border)",
+              border: "1px solid var(--border-subtle)",
               borderRadius: 12,
               marginTop: 12,
               background: "#000",
@@ -111,8 +113,8 @@ export default function ProjectDetailPage({ params }: Props) {
         <div style={{ marginTop: 24 }}>
           <h3>Live Interactive App</h3>
           {(project as any).credentials && (
-            <div className="card" style={{ padding: "10px 16px", margin: "12px 0", borderLeft: "3px solid var(--celestial-blue)", fontSize: "0.92rem" }}>
-              <strong style={{ color: "var(--celestial-blue)" }}>Demo Credentials: </strong>
+            <div className="card" style={{ padding: "10px 16px", margin: "12px 0", borderLeft: "3px solid var(--neon-teal)", fontSize: "0.9rem" }}>
+              <strong style={{ color: "var(--neon-teal)" }}>Demo Credentials: </strong>
               {(project as any).credentials.map((c: any) => (
                 <span key={c.role} style={{ marginRight: 14 }}>
                   <strong>{c.role}:</strong> <code>{c.username}</code> / <code>{c.password}</code>
@@ -122,7 +124,7 @@ export default function ProjectDetailPage({ params }: Props) {
           )}
           <iframe
             src={(project as any).live_url}
-            style={{ width: "100%", height: 800, border: "1px solid var(--night-border)", borderRadius: 12, marginTop: 12 }}
+            style={{ width: "100%", height: 800, border: "1px solid var(--border-subtle)", borderRadius: 12, marginTop: 12 }}
             title={project.title}
           />
         </div>
@@ -136,7 +138,7 @@ export default function ProjectDetailPage({ params }: Props) {
               <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
                 <div className="card" style={{ minHeight: 80 }}>
                   <div style={{ fontSize: "1rem", fontWeight: 700 }}>{link.label}</div>
-                  {link.desc && <p className="muted" style={{ fontSize: "0.88rem", marginTop: 4 }}>{link.desc}</p>}
+                  {link.desc && <p className="muted" style={{ fontSize: "0.86rem", marginTop: 4 }}>{link.desc}</p>}
                 </div>
               </a>
             ))}
@@ -153,7 +155,7 @@ export default function ProjectDetailPage({ params }: Props) {
         </div>
       )}
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 32, borderTop: "1px solid var(--night-border)", paddingTop: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 32, borderTop: "1px solid var(--border-subtle)", paddingTop: 16 }}>
         {prev ? <Link href={`/projects/${prev.slug}`} className="btn">← {prev.title}</Link> : <span />}
         {next ? <Link href={`/projects/${next.slug}`} className="btn">{next.title} →</Link> : <span />}
       </div>

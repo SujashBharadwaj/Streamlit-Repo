@@ -17,7 +17,7 @@ export default function Sidebar() {
       <div>
         <div className="sidebar-name">Sujash Bharadwaj</div>
         <div className="sidebar-role">Software &amp; ML Engineer</div>
-        <span className="version-badge">v3.0.0</span>
+        <span className="version-badge">v4.0</span>
       </div>
 
       <nav className="sidebar-nav">

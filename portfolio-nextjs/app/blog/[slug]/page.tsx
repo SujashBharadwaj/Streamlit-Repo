@@ -99,20 +99,20 @@ export default function BlogPostPage({ params }: Props) {
       <article>
         <div className="card" style={{ marginTop: 8, marginBottom: 24 }}>
           <h1 style={{ fontSize: "1.5rem" }}>{post.title}</h1>
-          <div className="muted" style={{ marginTop: 6, fontSize: "0.88rem" }}>{post.date}</div>
+          <div className="muted" style={{ marginTop: 6, fontSize: "0.85rem" }}>{post.date}</div>
           <div style={{ marginTop: 8 }}>
             {post.tags.map((t) => <span key={t} className="chip">{t}</span>)}
           </div>
         </div>
 
         <div
-          className="card"
+          className="card prose"
           style={{ lineHeight: 1.8 }}
           dangerouslySetInnerHTML={{ __html: contentHtml }}
         />
       </article>
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, borderTop: "1px solid var(--night-border)", paddingTop: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, borderTop: "1px solid var(--border-subtle)", paddingTop: 16 }}>
         {prev ? <Link href={`/blog/${prev}`} className="btn">← Previous</Link> : <span />}
         {next ? <Link href={`/blog/${next}`} className="btn">Next →</Link> : <span />}
       </div>
