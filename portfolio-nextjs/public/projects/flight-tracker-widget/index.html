@@ -741,13 +741,13 @@
        STANDALONE / EMBED AUTO-INITIALIZATION & LIVE FLIGHT SIMULATION
        ================================================================ */
     const SIMULATED_FLIGHT_POOL = [
-      { callsign: 'IGO5175', icao24: '800cd1', origin_country: 'India', baseLat: 19.12, baseLon: 72.84, heading: 245, velocity: 410, altitude: 1250, vrate: -4.2, on_ground: false },
-      { callsign: 'AIC101',  icao24: '800ab2', origin_country: 'India', baseLat: 19.06, baseLon: 72.89, heading: 90,  velocity: 490, altitude: 2300, vrate: 5.1,  on_ground: false },
-      { callsign: 'SEJ332',  icao24: '800ee4', origin_country: 'India', baseLat: 19.14, baseLon: 72.88, heading: 310, velocity: 380, altitude: 890,  vrate: -3.8, on_ground: false },
-      { callsign: 'VTI824',  icao24: '800fa5', origin_country: 'India', baseLat: 19.05, baseLon: 72.82, heading: 140, velocity: 520, altitude: 3100, vrate: 3.5,  on_ground: false },
-      { callsign: 'AXB412',  icao24: '800918', origin_country: 'India', baseLat: 19.10, baseLon: 72.91, heading: 210, velocity: 430, altitude: 1720, vrate: -2.1, on_ground: false },
-      { callsign: 'UAE507',  icao24: '8961a1', origin_country: 'United Arab Emirates', baseLat: 19.18, baseLon: 72.79, heading: 275, velocity: 580, altitude: 4200, vrate: 6.2, on_ground: false },
-      { callsign: 'GND-T01', icao24: '800001', origin_country: 'India', baseLat: 19.091, baseLon: 72.868, heading: 45, velocity: 25,  altitude: 12,   vrate: 0.0,  on_ground: true }
+      { callsign: 'IGO5175', icao24: '800cd1', origin_country: 'India', latitude: 19.12, longitude: 72.84, heading: 245, velocity: 410, altitude: 1250, vrate: -4.2, on_ground: false },
+      { callsign: 'AIC101',  icao24: '800ab2', origin_country: 'India', latitude: 19.06, longitude: 72.89, heading: 90,  velocity: 490, altitude: 2300, vrate: 5.1,  on_ground: false },
+      { callsign: 'SEJ332',  icao24: '800ee4', origin_country: 'India', latitude: 19.14, longitude: 72.88, heading: 310, velocity: 380, altitude: 890,  vrate: -3.8, on_ground: false },
+      { callsign: 'VTI824',  icao24: '800fa5', origin_country: 'India', latitude: 19.05, longitude: 72.82, heading: 140, velocity: 520, altitude: 3100, vrate: 3.5,  on_ground: false },
+      { callsign: 'AXB412',  icao24: '800918', origin_country: 'India', latitude: 19.10, longitude: 72.91, heading: 210, velocity: 430, altitude: 1720, vrate: -2.1, on_ground: false },
+      { callsign: 'UAE507',  icao24: '8961a1', origin_country: 'United Arab Emirates', latitude: 19.18, longitude: 72.79, heading: 275, velocity: 580, altitude: 4200, vrate: 6.2, on_ground: false },
+      { callsign: 'GND-T01', icao24: '800001', origin_country: 'India', latitude: 19.091, longitude: 72.868, heading: 45, velocity: 25,  altitude: 12,   vrate: 0.0,  on_ground: true }
     ];
 
     let liveSimFlights = JSON.parse(JSON.stringify(SIMULATED_FLIGHT_POOL));

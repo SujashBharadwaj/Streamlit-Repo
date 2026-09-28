@@ -38,6 +38,7 @@ async def record_demo():
     # Start local HTTP server for static files
     server = start_local_server(PUBLIC_DIR)
     print(f"Local server started on http://localhost:9876")
+    await asyncio.sleep(2)
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -60,6 +61,7 @@ async def record_demo():
         await page.wait_for_timeout(4000)
 
         # 2. Toggle through radius options
+
         radius_buttons = await page.query_selector_all(".radius-btn")
         if len(radius_buttons) >= 1:
             print("Switching to 5 km radius...")
@@ -77,12 +79,13 @@ async def record_demo():
             await page.wait_for_timeout(3000)
 
         # 3. Click aircraft markers to open the info HUD card
-        markers = await page.query_selector_all(".leaflet-marker-icon")
+        markers = await page.query_selector_all(".aircraft-marker")
         if len(markers) >= 1:
             print(f"Clicking aircraft marker 1 of {len(markers)}...")
             await markers[0].click()
             await page.wait_for_timeout(4000)
 
+        markers = await page.query_selector_all(".aircraft-marker")
         if len(markers) >= 2:
             print(f"Clicking aircraft marker 2...")
             await markers[1].click()
@@ -115,12 +118,43 @@ async def record_demo():
             await ground_btn.click()
             await page.wait_for_timeout(2000)
 
-        # 8. Click another aircraft if available
-        markers = await page.query_selector_all(".leaflet-marker-icon")
-        if len(markers) >= 3:
-            print(f"Clicking aircraft marker 3...")
-            await markers[2].click()
-            await page.wait_for_timeout(4000)
+        # 8. Trigger a realistic native Windows toast notification mock
+        print("Triggering mock desktop notification...")
+        await page.evaluate("""() => {
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.right = '20px';
+            toast.style.width = '360px';
+            toast.style.background = '#1c1c1c';
+            toast.style.border = '1px solid #333';
+            toast.style.borderRadius = '8px';
+            toast.style.padding = '16px';
+            toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
+            toast.style.color = '#fff';
+            toast.style.fontFamily = 'Segoe UI, sans-serif';
+            toast.style.zIndex = '9999';
+            toast.style.display = 'flex';
+            toast.style.gap = '16px';
+            toast.style.transform = 'translateX(400px)';
+            toast.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            
+            toast.innerHTML = `
+                <div style="font-size:24px; line-height:1;">✈️</div>
+                <div>
+                    <div style="font-size:12px; color:#aaa; margin-bottom:4px;">RJ Airplane Tracker</div>
+                    <div style="font-size:14px; font-weight:bold; margin-bottom:4px;">UAE507 Entered Airspace</div>
+                    <div style="font-size:13px; color:#ccc;">Emirates · 4200m · 580 km/h</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            // Slide in
+            setTimeout(() => { toast.style.transform = 'translateX(0)'; }, 100);
+            // Slide out
+            setTimeout(() => { toast.style.transform = 'translateX(400px)'; }, 4500);
+        }""")
+        await page.wait_for_timeout(5000)
 
         # 9. Final hold — let the radar run
         print("Final hold (5s)...")
