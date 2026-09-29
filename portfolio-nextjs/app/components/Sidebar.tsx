@@ -17,7 +17,11 @@ export default function Sidebar() {
       <div>
         <div className="sidebar-name">Sujash Bharadwaj</div>
         <div className="sidebar-role">Software &amp; ML Engineer</div>
-        <span className="version-badge">v4.0</span>
+        <span className="version-badge">v4.1 ⚡</span>
+        <span className="bijli-sidebar-badge">
+          <span className="bijli-sidebar-dot" />
+          ⚡ Bijli watching
+        </span>
       </div>
 
       <nav className="sidebar-nav">

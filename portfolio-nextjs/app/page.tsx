@@ -4,8 +4,14 @@ import path from "path";
 import projects from "./data/projects.json";
 import ProjectsSlider from "./components/ProjectsSlider";
 import BlogSlider from "./components/BlogSlider";
+import dynamic from "next/dynamic";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+/* Bijli is a client component with mouse tracking — load dynamically */
+const BijliCharacter = dynamic(() => import("./components/BijliCharacter"), {
+  ssr: false,
+});
 
 function loadRecentPosts() {
   const postsDir = path.join(process.cwd(), "app", "data", "posts");
@@ -43,17 +49,22 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero */}
+      {/* Hero — 2-column with Bijli */}
       <section style={{ marginBottom: "3rem" }}>
-        <h1 className="hero-name">Sujash Bharadwaj</h1>
-        <div className="speed-line" />
-        <p className="hero-tagline">
-          Software Engineer at sfhawk Solutions. Building production systems,
-          exploring vision &amp; language models, and keeping things reproducible.
-        </p>
-        <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-          <Link href="/projects" className="btn btn-primary">Explore Projects</Link>
-          <Link href="/blog" className="btn">Read the Blog</Link>
+        <div className="hero-row">
+          <div className="hero-text">
+            <h1 className="hero-name">Sujash Bharadwaj</h1>
+            <div className="speed-line" />
+            <p className="hero-tagline">
+              Software &amp; Machine Learning Engineer. Building production systems,
+              exploring vision &amp; language models, and keeping things reproducible.
+            </p>
+            <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+              <Link href="/projects" className="btn btn-primary">Explore Projects</Link>
+              <Link href="/blog" className="btn">Read the Blog</Link>
+            </div>
+          </div>
+          <BijliCharacter />
         </div>
       </section>
 
@@ -83,3 +94,4 @@ export default function HomePage() {
     </>
   );
 }
+

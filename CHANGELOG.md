@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v4.1.0] — 2026-09-29 — ⚡ Bijli Edition
+
+### Added
+- **Bijli — Animated Mascot Character**: Introduced "Bijli" (⚡ बिजली), a fluffy, chubby, short-legged black cat with amber-yellow eyes and a red collar as the portfolio's interactive digital familiar. Built as a zero-dependency React client component (`app/components/BijliCharacter.tsx`).
+- **Cursor Eye Tracking**: Bijli's glowing amber eyes dynamically follow the user's mouse position across the viewport using `requestAnimationFrame`-grade coordinate interpolation.
+- **Click Speech Bubbles**: Clicking Bijli triggers randomized witty developer-cat quips (e.g., *"Batted at a bug. It's a feature now."*, *"npm install treats --save 🐟"*) displayed in animated speech bubbles with 3.5s auto-dismiss.
+- **Sleep / Wake Toggle**: A 🌙/☀️ toggle lets users put Bijli to sleep (loaf mode with floating 💤 and grayscale filter) or wake her up. Clicking a sleeping Bijli also wakes her.
+- **Idle Animations**: Subtle breathing pulse (CSS `scale` keyframe), natural double-blink cycle every ~5 seconds, and alert-state pop on hover.
+- **Sidebar Companion Badge**: Added a pulsing green-dot `⚡ Bijli watching` status indicator below the version badge in the sidebar for site-wide presence.
+
+### Changed
+- **Hero Section → 2-Column Layout**: Restructured homepage hero from single-column to a responsive flex row: text + CTA buttons on the left, Bijli mascot card on the right. Stacks vertically (Bijli on top) on mobile (< 900px).
+- **Dynamic Import**: Bijli loaded via `next/dynamic` with `ssr: false` to avoid hydration mismatches from mouse tracking state.
+- **Version Bump**: Bumped to **v4.1.0 ⚡ Bijli Edition** across sidebar badge and `package.json`.
+
+### Assets
+- **Bijli Portrait** (`public/bijli.jpg`): High-quality generated illustration of a fluffy chubby black cat perched on a tech-circuit ledge, red collar with golden lightning bolt charm.
+
+---
+
 ## [v3.0.0] — 2026-09-25
 
 ### Added

@@ -49,13 +49,60 @@ function loadPost(slug: string) {
 }
 
 function markdownToHtml(md: string): string {
-  let html = md;
+  // ── Pass 1: Extract markdown tables before inline transforms ──
+  // A table block = header row, separator row (|---|), then body rows
+  const lines = md.split('\n');
+  const processedLines: string[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    // Detect table: current line has pipes and next line is a separator row
+    if (
+      i + 1 < lines.length &&
+      lines[i].trim().startsWith('|') &&
+      lines[i].trim().endsWith('|') &&
+      /^\|[\s:]*-{2,}[\s:]*\|/.test(lines[i + 1].trim())
+    ) {
+      // Parse header
+      const headerCells = lines[i].trim().slice(1, -1).split('|').map((c) => c.trim());
+      i += 2; // skip header + separator
+
+      // Parse body rows
+      const bodyRows: string[][] = [];
+      while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
+        bodyRows.push(lines[i].trim().slice(1, -1).split('|').map((c) => c.trim()));
+        i++;
+      }
+
+      // Build HTML table
+      let table = '<div class="table-wrapper"><table>';
+      table += '<thead><tr>' + headerCells.map((c) => `<th>${c}</th>`).join('') + '</tr></thead>';
+      table += '<tbody>';
+      for (const row of bodyRows) {
+        table += '<tr>' + row.map((c) => `<td>${c}</td>`).join('') + '</tr>';
+      }
+      table += '</tbody></table></div>';
+      processedLines.push(table);
+    } else {
+      processedLines.push(lines[i]);
+      i++;
+    }
+  }
+
+  let html = processedLines.join('\n');
+
+  // ── Pass 2: Inline & block transforms ──
   html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
   html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
   html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+  
+  // Images
+  html = html.replace(/!\[([^\]]*)\]\((.*?)\)/g, '<figure class="blog-img-card"><img src="$2" alt="$1" /><figcaption>$1</figcaption></figure>');
+  
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  html = html.replace(/\\_/g, '_');
   html = html.replace(/^\* (.*)$/gm, '<li>$1</li>');
   html = html.replace(/^- (.*)$/gm, '<li>$1</li>');
   html = html.replace(/((?:<li>.*<\/li>\s*)+)/g, '<ul>$1</ul>');
@@ -67,6 +114,11 @@ function markdownToHtml(md: string): string {
   html = html.replace(/<\/h([1-6])>\s*<\/p>/g, '</h$1>');
   html = html.replace(/<p>\s*<ul>/g, '<ul>');
   html = html.replace(/<\/ul>\s*<\/p>/g, '</ul>');
+  // Clean up tables wrapped in paragraphs
+  html = html.replace(/<p>\s*<div class="table-wrapper">/g, '<div class="table-wrapper">');
+  html = html.replace(/<\/div>\s*<\/p>/g, '</div>');
+  html = html.replace(/<p>\s*<figure class="blog-img-card">/g, '<figure class="blog-img-card">');
+  html = html.replace(/<\/figure>\s*<\/p>/g, '</figure>');
   return html;
 }
 
@@ -79,6 +131,12 @@ export function generateMetadata({ params }: Props) {
   return { title: post ? `${post.title} | Sujash Bharadwaj` : "Blog" };
 }
 
+import GradientDescentPlayground from "@/app/components/blogs/GradientDescentPlayground";
+import MeansPlayground from "@/app/components/blogs/MeansPlayground";
+import OEEPlayground from "@/app/components/blogs/OEEPlayground";
+import MathRenderer from "@/app/components/blogs/MathRenderer";
+
+// In BlogPostPage
 export default function BlogPostPage({ params }: Props) {
   const post = loadPost(params.slug);
   if (!post) notFound();
@@ -89,9 +147,11 @@ export default function BlogPostPage({ params }: Props) {
   const next = idx > 0 ? slugs[idx - 1] : null;
 
   const contentHtml = markdownToHtml(post.body);
+  const parts = contentHtml.split("<!-- PLAYGROUND_MARKER -->");
 
   return (
     <>
+      <MathRenderer />
       <Link href="/blog" className="btn" style={{ marginBottom: 16, display: "inline-flex" }}>
         ← Back to all posts
       </Link>
@@ -108,8 +168,24 @@ export default function BlogPostPage({ params }: Props) {
         <div
           className="card prose"
           style={{ lineHeight: 1.8 }}
-          dangerouslySetInnerHTML={{ __html: contentHtml }}
+          dangerouslySetInnerHTML={{ __html: parts[0] }}
         />
+
+        {parts.length > 1 && (
+          <div style={{ marginTop: 24 }}>
+            {params.slug === "2025-09-08-gradient-descent" && <GradientDescentPlayground />}
+            {params.slug === "2025-09-02-means-guide" && <MeansPlayground />}
+            {params.slug === "2026-01-22-oee" && <OEEPlayground />}
+          </div>
+        )}
+
+        {parts.length > 1 && parts[1].trim() !== "" && (
+          <div
+            className="card prose"
+            style={{ lineHeight: 1.8, marginTop: 24 }}
+            dangerouslySetInnerHTML={{ __html: parts[1] }}
+          />
+        )}
       </article>
 
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, borderTop: "1px solid var(--border-subtle)", paddingTop: 16 }}>

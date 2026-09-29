@@ -58,3 +58,8 @@ htmlcov/
 # Keep .streamlit/config.toml tracked (theme config)
 # but ignore secrets
 .streamlit/secrets.toml
+
+# ========================
+# Local Notes / Ideas
+# ========================
+ideas.md

@@ -89,37 +89,7 @@ Published: Sep 2, 2025
 | Outliers present but keep a mean | Trimmed mean | Removes tails and keeps a familiar average |
 | Sensitivity study or policy knob | Power mean | Move \(p\) to compare centers and see the effect |
 
-## Interactive playground
-
-Numbers (comma, space or newline)
-1, 2, 8
-
-Weights (optional; same count)
-
-Trim percent each tail
-
-Power mean \(p\) (0 gives GM, 1 gives AM, 2 gives RMS)
-
-p = 1
-
-Show on chart
-
- AM
- GM
- HM
- RMS
- Contra
- Weighted
- Trimmed
- \(M\_p\)
-
-Compute and draw
-
-| Mean | Value | Difference from AM |
-| --- | --- | --- |
-
- Notes. GM and HM and \(M\_p\) with \(p\le 0\) require all values to be positive. Contraharmonic needs non-negative values and a positive sum.
- 
+<!-- PLAYGROUND_MARKER -->
 
 ## Takeaways
 
